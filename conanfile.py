@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+
 import os
 import sys
 from conans import ConanFile, tools
@@ -237,7 +238,8 @@ class BitprimconanboostConan(ConanFile):
 
 
             cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
- 
+            cxx_flags.append("-Wno-deprecated-declarations")
+
             if self.settings.compiler == "gcc":
                 if float(self.settings.compiler.version) >= 5:
                     flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
