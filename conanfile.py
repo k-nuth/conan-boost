@@ -396,7 +396,8 @@ class BitprimconanboostConan(ConanFile):
                 abi_tags = []
 
                 if self.settings.build_type == "Debug":
-                    abi_tags.append("gd")
+                    abi_tags.append("d")
+                    # abi_tags.append("gd")
 
                 abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
 
