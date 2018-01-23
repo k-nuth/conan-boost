@@ -238,7 +238,9 @@ class BitprimconanboostConan(ConanFile):
 
 
             cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
-            cxx_flags.append("-Wno-deprecated-declarations")
+
+            if self.settings.compiler != "Visual Studio":
+                cxx_flags.append("-Wno-deprecated-declarations")
 
             if self.settings.compiler == "gcc":
                 if float(self.settings.compiler.version) >= 5:
