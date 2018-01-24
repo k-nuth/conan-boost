@@ -164,6 +164,11 @@ class BitprimconanboostConan(ConanFile):
         
         try:
             self.run("cd %s && %s" % (self.FOLDER_NAME, command))
+
+            self.run("cd %s && type bootstrap.log" % self.FOLDER_NAME
+                    if self.settings.os == "Windows"
+                    else "cd %s && cat bootstrap.log" % self.FOLDER_NAME)
+
         except:
             self.run("cd %s && type bootstrap.log" % self.FOLDER_NAME
                     if self.settings.os == "Windows"
