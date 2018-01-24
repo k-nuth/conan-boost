@@ -19,7 +19,8 @@
 
 env:
    global:
-     - CONAN_REFERENCE: "bitprim-conan-boost/1.64.0"
+    #  - CONAN_REFERENCE: "bitprim-conan-boost/1.64.0"
+     - CONAN_REFERENCE: "bitprim-conan-boost/1.65.1"
      - CONAN_USERNAME: "bitprim"
      - CONAN_LOGIN_USERNAME: "bitprim-bintray"
      - CONAN_CHANNEL: "stable"
