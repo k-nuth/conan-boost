@@ -25,7 +25,8 @@ from conans import ConanFile, tools
 
 class BitprimconanboostConan(ConanFile):
     name = "bitprim-conan-boost"
-    version = "1.65.1"
+    version = "1.66.0"
+    # version = "1.65.1"
     # version = "1.64.0"
     license = "http://www.boost.org/LICENSE_1_0.txt"
     url = "https://github.com/bitprim/bitprim-conan-boost/blob/master/conanfile.py"
