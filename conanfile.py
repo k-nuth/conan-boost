@@ -379,6 +379,7 @@ class BitprimconanboostConan(ConanFile):
                 win_libs = []
                 visual_version = self._msvc_version()
                 runtime = "mt" # str(self.settings.compiler.runtime).lower()
+                arch = "x64"
 
                 abi_tags = []
                 if self.settings.compiler.runtime in ("MTd", "MT"):
@@ -390,7 +391,7 @@ class BitprimconanboostConan(ConanFile):
                 abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
 
                 
-                suffix = "vc%s-%s%s-%s" %  (visual_version.replace(".", ""), runtime, abi_tags, version)
+                suffix = "vc%s-%s%s-%s-%s" %  (visual_version.replace(".", ""), runtime, abi_tags, arch, version)
                 prefix = "lib" if not self.options.shared else ""
 
                 win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
@@ -403,6 +404,7 @@ class BitprimconanboostConan(ConanFile):
                 win_libs = []
                 mingw_version = self._mingw_version()
                 runtime = "mt" # str(self.settings.compiler.runtime).lower()
+                arch = "x64"
 
                 abi_tags = []
 
@@ -412,7 +414,7 @@ class BitprimconanboostConan(ConanFile):
 
                 abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
 
-                suffix = "mgw%s-%s%s-%s" %  (mingw_version.replace(".", ""), runtime, abi_tags, version)
+                suffix = "mgw%s-%s%s-%s-%s" %  (mingw_version.replace(".", ""), runtime, abi_tags, arch, version)
                 #prefix = "lib" if not self.options.shared else ""
                 prefix = ""
 
