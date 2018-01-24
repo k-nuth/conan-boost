@@ -59,13 +59,13 @@ class BitprimconanboostConan(ConanFile):
         "without_locale": [True, False],
         "without_log": [True, False],
         "without_math": [True, False],
-        "without_metaparse": [True, False],
         "without_mpi": [True, False],
         "without_program_options": [True, False],
         "without_random": [True, False],
         "without_regex": [True, False],
         "without_serialization": [True, False],
         "without_signals": [True, False],
+        "without_stacktrace": [True, False],
         "without_system": [True, False],
         "without_test": [True, False],
         "without_thread": [True, False],
@@ -73,6 +73,8 @@ class BitprimconanboostConan(ConanFile):
         "without_type_erasure": [True, False],
         "without_wave": [True, False]
     }
+
+        # "without_metaparse": [True, False],
 
     default_options = "shared=False", \
         "header_only=False", \
@@ -93,19 +95,21 @@ class BitprimconanboostConan(ConanFile):
         "without_locale=False", \
         "without_log=False", \
         "without_math=True", \
-        "without_metaparse=True", \
         "without_mpi=True", \
         "without_program_options=False", \
         "without_random=False", \
         "without_regex=False", \
         "without_serialization=True", \
         "without_signals=True", \
+        "without_stacktrace=True", \
         "without_system=False", \
         "without_test=False", \
         "without_thread=False", \
         "without_timer=False", \
         "without_type_erasure=True", \
         "without_wave=True"
+
+        # "without_metaparse=True", \
 
     libs_by_option = {
         "atomic": ["atomic"],
@@ -123,13 +127,13 @@ class BitprimconanboostConan(ConanFile):
         "locale": ["locale"],
         "log": ["log", "log_setup"],
         "math": ["math_c99", "math_c99f", "math_c99l", "math_tr1", "math_tr1f", "math_tr1l"],
-        "metaparse": ["metaparse"],
         "mpi": ["mpi"],
         "program_options": ["program_options"],
         "random": ["random"],
         "regex": ["regex"],
         "serialization": ["serialization", "wserialization"],
         "signals": ["signals"],
+        "stacktrace": ["stacktrace"],
         "system": ["system"],
         "test": ["unit_test_framework", "prg_exec_monitor", "test_exec_monitor"],
         "thread": ["thread"],
@@ -137,6 +141,8 @@ class BitprimconanboostConan(ConanFile):
         "type_erasure": ["type_erasure"],
         "wave": ["wave"]
     }
+
+        # "metaparse": ["metaparse"],
 
     def build(self):
 
@@ -199,13 +205,13 @@ class BitprimconanboostConan(ConanFile):
             "--without-locale": self.options.without_locale,
             "--without-log": self.options.without_log,
             "--without-math": self.options.without_math,
-            "--without-metaparse": self.options.without_metaparse,
             "--without-mpi": self.options.without_mpi,
             "--without-program_options": self.options.without_program_options,
             "--without-random": self.options.without_random,
             "--without-regex": self.options.without_regex,
             "--without-serialization": self.options.without_serialization,
             "--without-signals": self.options.without_signals,
+            "--without-stacktrace": self.options.without_stacktrace,
             "--without-system": self.options.without_system,
             "--without-test": self.options.without_test,
             "--without-thread": self.options.without_thread,
@@ -213,6 +219,8 @@ class BitprimconanboostConan(ConanFile):
             "--without-type_erasure": self.options.without_type_erasure,
             "--without-wave": self.options.without_wave
         }
+
+            # "--without-metaparse": self.options.without_metaparse,
 
         for option_name, activated in option_names.items():
             if activated:
