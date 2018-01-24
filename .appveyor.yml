@@ -52,4 +52,3 @@ install:
 
 test_script:
   - python build.py
-  - type bootstrap.log
