@@ -119,7 +119,7 @@ class BitprimConanBoost(ConanFile):
 
     @property
     def msvc_mt_build(self):
-        return "MT" in str(self.settings.compiler.runtime):
+        return "MT" in str(self.settings.compiler.runtime)
 
     def requirements(self):
         if self.zip_bzip2_requires_needed:
@@ -255,7 +255,7 @@ class BitprimConanBoost(ConanFile):
             flags.append("--layout=system")
 
         if self.settings.compiler == "Visual Studio" and self.settings.compiler.runtime:
-            flags.append("runtime-link=%s" % ("static" if "MT" in str(self.settings.compiler.runtime) else "shared"))
+            flags.append("runtime-link=%s" % ("static" if msvc_mt_build else "shared"))
 
         if self.settings.os == "Windows" and self.settings.compiler == "gcc":
             flags.append("threading=multi")
