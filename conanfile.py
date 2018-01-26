@@ -22,94 +22,60 @@ import os
 import sys
 from conans import ConanFile, tools
 
+# From from *1 (see below, b2 --show-libraries), also ordered following linkage order
+# see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
 
-class BitprimconanboostConan(ConanFile):
-    name = "bitprim-conan-boost"
+lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'locale', 'log',
+            'program_options', 'random', 'regex', 'mpi', 'serialization', 'signals',
+            'coroutine', 'fiber', 'context', 'timer', 'thread', 'chrono', 'date_time',
+            'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
+            'stacktrace', 'test', 'type_erasure']
+
+class BitprimConanBoost(ConanFile):
+    #name = "bitprim-conan-boost"
+    name = "boost"
     version = "1.66.0"
-    # version = "1.65.1"
-    # version = "1.64.0"
-    license = "http://www.boost.org/LICENSE_1_0.txt"
-    url = "https://github.com/bitprim/bitprim-conan-boost/blob/master/conanfile.py"
-    description = "Parameterized Conan recipe for Boost"
-    settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake"
-    exports_sources = "src/*"
-    exports = ["FindBoost.cmake", "OriginalFindBoost*"]
-    short_paths = True
-    FOLDER_NAME = "boost_%s" % version.replace(".", "_")
-    build_policy = "missing" # "always"
 
+    settings = "os", "arch", "compiler", "build_type"
+    folder_name = "boost_%s" % version.replace(".", "_")
+    description = "Boost provides free peer-reviewed portable C++ source libraries"
+
+    # The current python option requires the package to be built locally, to find default Python
+    # implementation
     options = {
         "shared": [True, False],
         "header_only": [True, False],
-        "fPIC": [True, False],
-        "python": [True, False],
-        "without_atomic": [True, False],
-        "without_chrono": [True, False],
-        "without_container": [True, False],
-        "without_context": [True, False],
-        "without_coroutine": [True, False],
-        "without_date_time": [True, False],
-        "without_exception": [True, False],
-        "without_fiber": [True, False],
-        "without_filesystem": [True, False],
-        "without_graph": [True, False],
-        "without_graph_parallel": [True, False],
-        "without_iostreams": [True, False],
-        "without_locale": [True, False],
-        "without_log": [True, False],
-        "without_math": [True, False],
-        "without_mpi": [True, False],
-        "without_program_options": [True, False],
-        "without_random": [True, False],
-        "without_regex": [True, False],
-        "without_serialization": [True, False],
-        "without_signals": [True, False],
-        "without_stacktrace": [True, False],
-        "without_system": [True, False],
-        "without_test": [True, False],
-        "without_thread": [True, False],
-        "without_timer": [True, False],
-        "without_type_erasure": [True, False],
-        "without_wave": [True, False]
+        "fPIC": [True, False]
     }
+    options.update({"without_%s" % libname: [True, False] for libname in lib_list})
 
-        # "without_metaparse": [True, False],
+    #default_options = ["shared=False", "header_only=False", "fPIC=True"]
+    #default_options.extend(["without_%s=False" % libname for libname in lib_list if libname != "python"])
+    #default_options.append("without_python=True")
+    #default_options = tuple(default_options)
 
-    default_options = "shared=False", \
-        "header_only=False", \
-        "fPIC=True", \
-        "python=True", \
-        "without_atomic=False", \
-        "without_chrono=False", \
-        "without_container=True", \
-        "without_context=True", \
-        "without_coroutine=True", \
-        "without_date_time=False", \
-        "without_exception=False", \
-        "without_fiber=True", \
-        "without_filesystem=False", \
-        "without_graph=True", \
-        "without_graph_parallel=True", \
-        "without_iostreams=False", \
-        "without_locale=False", \
-        "without_log=False", \
-        "without_math=True", \
-        "without_mpi=True", \
-        "without_program_options=False", \
-        "without_random=False", \
-        "without_regex=False", \
-        "without_serialization=True", \
-        "without_signals=True", \
-        "without_stacktrace=True", \
-        "without_system=False", \
-        "without_test=False", \
-        "without_thread=False", \
-        "without_timer=False", \
-        "without_type_erasure=True", \
-        "without_wave=True"
+    default_options = ["shared=False", "header_only=False", "fPIC=True", 
+        "python=True", "without_atomic=False", "without_chrono=False", 
+        "without_container=True", "without_context=True", "without_coroutine=True", 
+        "without_date_time=False", "without_exception=False", "without_fiber=True", 
+        "without_filesystem=False", "without_graph=True", "without_graph_parallel=True", 
+        "without_iostreams=False", "without_locale=False", "without_log=False", 
+        "without_math=True", "without_mpi=True", "without_program_options=False", 
+        "without_random=False", "without_regex=False", "without_serialization=True", 
+        "without_signals=True", "without_stacktrace=True", "without_system=False", 
+        "without_test=False", "without_thread=False", "without_timer=False", 
+        "without_type_erasure=True", "without_wave=True"]
 
-        # "without_metaparse=True", \
+
+
+    url = "https://github.com/bitprim/bitprim-conan-boost"
+    license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
+    short_paths = True
+    no_copy_source = False
+
+    #exports_sources = "src/*"
+    #exports = ["FindBoost.cmake", "OriginalFindBoost*"]
+    build_policy = "missing" # "always"
 
     libs_by_option = {
         "atomic": ["atomic"],
@@ -142,331 +108,655 @@ class BitprimconanboostConan(ConanFile):
         "wave": ["wave"]
     }
 
-        # "metaparse": ["metaparse"],
+
+    @property
+    def zip_bzip2_requires_needed(self):
+        return not self.options.without_iostreams and not self.options.header_only
+
+    @property
+    def icu_requires_needed(self):
+        return not self.options.header_only and (not self.options.without_regex or not self.options.without_locale)
+
+    @property
+    def msvc_mt_build(self):
+        return "MT" in str(self.settings.compiler.runtime):
+
+    def requirements(self):
+        if self.zip_bzip2_requires_needed:
+            self.requires("bzip2/1.0.6@bitprim/stable")
+            self.options["bzip2"].shared = self.options.shared #False
+            
+            self.requires("zlib/1.2.11@bitprim/stable")
+            self.options["zlib"].shared = self.options.shared #False
+
+        if self.icu_requires_needed:
+            self.requires("icu/60.2@bitprim/stable")
+            self.options["icu"].shared = self.options.shared #False
+
+    def config_options(self):
+        if self.settings.compiler == "Visual Studio":
+            self.options.remove("fPIC")
+
+            if self.options.shared and msvc_mt_build:
+                self.options.remove("shared")
+
+    def configure(self):
+        # if self.settings.compiler == "Visual Studio" and self.options.shared and msvc_mt_build:
+        #     self.options.shared = False
+
+        # if not self.options.without_iostreams:
+        #     if self.settings.os == "Linux" or self.settings.os == "Macos":
+        #         self.requires("bzip2/1.0.6@bitprim/stable")
+        #         if not self.options.header_only:
+        #             self.options["bzip2/1.0.6"].shared = self.options.shared
+
+        #     self.requires("zlib/1.2.8@bitprim/stable")
+        #     if not self.options.header_only:
+        #         self.options["zlib"].shared = self.options.shared
+
+        # if self.zip_bzip2_requires_needed:
+        #     self.requires("bzip2/1.0.6@bitprim/stable")
+        #     self.options["bzip2"].shared = self.options.shared #False
+            
+        #     self.requires("zlib/1.2.11@bitprim/stable")
+        #     self.options["zlib"].shared = self.options.shared #False
+
+        # if self.icu_requires_needed:
+        #     self.requires("icu/60.2@bitprim/stable")
+        #     self.options["icu"].shared = self.options.shared #False
+
+
+    # def package_id(self):
+    #     if self.options.header_only:
+    #         self.info.requires.clear()
+    #         self.info.settings.clear()
+
+    def package_id(self):
+        if self.options.header_only:
+            self.info.header_only()
+
+    def source(self):
+        zip_name = "%s.zip" % self.folder_name if sys.platform == "win32" else "%s.tar.gz" % self.folder_name
+        #url = "http://sourceforge.net/projects/boost/files/boost/%s/%s/download" % (self.version, zip_name)
+        url = "https://dl.bintray.com/boostorg/release/%s/source/%s" % (self.version, zip_name)
+        self.output.info("Downloading %s..." % url)
+        tools.download(url, zip_name)
+
+        tools.unzip(zip_name)
+        os.unlink(zip_name)
+
+    ##################### BUILDING METHODS ###########################
 
     def build(self):
-
         if self.options.header_only:
             self.output.warn("Header only package, skipping build")
             return
 
-        toolset = "darwin" if self.settings.os == "Macos" else self.settings.compiler
-        
-        # command = "bootstrap" if self.settings.os == "Windows" else "./bootstrap.sh --with-toolset=%s" % self.settings.compiler
-        command = ""
-        if self.settings.os == "Windows":
-            if self.settings.compiler == "gcc":
-                command = "bootstrap gcc"
-            else:
-                command = "bootstrap"
-        else:
-            command = "./bootstrap.sh --with-toolset=%s" % toolset
-        
-        try:
-            self.run("cd %s && %s" % (self.FOLDER_NAME, command))
-
-            self.run("cd %s && type bootstrap.log" % self.FOLDER_NAME
-                    if self.settings.os == "Windows"
-                    else "cd %s && cat bootstrap.log" % self.FOLDER_NAME)
-
-        except:
-            self.run("cd %s && type bootstrap.log" % self.FOLDER_NAME
-                    if self.settings.os == "Windows"
-                    else "cd %s && cat bootstrap.log" % self.FOLDER_NAME)
-            raise
-
-        flags = []
-
-        if self.settings.compiler == "Visual Studio":
-            flags.append("toolset=msvc-%s" % self._msvc_version())
-        elif self.settings.compiler == "gcc":
-            # For GCC we only need the major version otherwhise Boost doesn't find the compiler
-            #flags.append("toolset=%s-%s"% (self.settings.compiler, self._gcc_short_version(self.settings.compiler.version)))
-            flags.append("toolset=gcc")
-        elif str(self.settings.compiler) in ["clang"]:
-            flags.append("toolset=%s-%s"% (self.settings.compiler, self.settings.compiler.version))
-
-        flags.append("link=%s" % ("static" if not self.options.shared else "shared"))
-
-        if self.settings.compiler == "Visual Studio" and self.settings.compiler.runtime:
-            flags.append("runtime-link=%s" % ("static" if "MT" in str(self.settings.compiler.runtime) else "shared"))
-        
-        flags.append("variant=%s" % str(self.settings.build_type).lower())
-        flags.append("address-model=%s" % ("32" if self.settings.arch == "x86" else "64"))
-
-        option_names = {
-            "--without-atomic": self.options.without_atomic,
-            "--without-chrono": self.options.without_chrono,
-            "--without-container": self.options.without_container,
-            "--without-context": self.options.without_context,
-            "--without-coroutine": self.options.without_coroutine,
-            "--without-date_time": self.options.without_date_time,
-            "--without-exception": self.options.without_exception,
-            "--without-fiber": self.options.without_fiber,
-            "--without-filesystem": self.options.without_filesystem,
-            "--without-graph": self.options.without_graph,
-            "--without-graph_parallel": self.options.without_graph_parallel,
-            "--without-iostreams": self.options.without_iostreams,
-            "--without-locale": self.options.without_locale,
-            "--without-log": self.options.without_log,
-            "--without-math": self.options.without_math,
-            "--without-mpi": self.options.without_mpi,
-            "--without-program_options": self.options.without_program_options,
-            "--without-random": self.options.without_random,
-            "--without-regex": self.options.without_regex,
-            "--without-serialization": self.options.without_serialization,
-            "--without-signals": self.options.without_signals,
-            "--without-stacktrace": self.options.without_stacktrace,
-            "--without-system": self.options.without_system,
-            "--without-test": self.options.without_test,
-            "--without-thread": self.options.without_thread,
-            "--without-timer": self.options.without_timer,
-            "--without-type_erasure": self.options.without_type_erasure,
-            "--without-wave": self.options.without_wave
-        }
-
-            # "--without-metaparse": self.options.without_metaparse,
-
-        for option_name, activated in option_names.items():
-            if activated:
-                flags.append(option_name)
-
-        cxx_flags = []
-        # fPIC DEFINITION
-        if self.settings.compiler != "Visual Studio":
-            if self.options.fPIC:
-                cxx_flags.append("-fPIC")
-
-
-        # LIBCXX DEFINITION FOR BOOST B2
-        try:
-            #if str(self.settings.compiler.libcxx) == "libstdc++":
-            #    print("define=_GLIBCXX_USE_CXX11_ABI=0")
-            #    flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
-            #elif str(self.settings.compiler.libcxx) == "libstdc++11":
-            #    print("define=_GLIBCXX_USE_CXX11_ABI=1")
-            #    flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
-
-            #flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
-
-
-
-            cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
-
-            if self.settings.compiler != "Visual Studio":
-                cxx_flags.append("-Wno-deprecated-declarations")
-
-            if self.settings.compiler == "gcc":
-                if float(self.settings.compiler.version) >= 5:
-                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
-                else:
-                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
-
-            if "clang" in str(self.settings.compiler):
-                if str(self.settings.compiler.libcxx) == "libc++":
-                    cxx_flags.append("-stdlib=libc++")
-                    cxx_flags.append("-std=c++11")
-                    flags.append('linkflags="-stdlib=libc++"')
-                else:
-                    cxx_flags.append("-stdlib=libstdc++")
-                    cxx_flags.append("-std=c++11")
-        except BaseException as e:
-            self.output.warn(str(e))
-
-        cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
-        flags.append(cxx_flags)
-        flags.append("--without-python")
-        flags.append("-d 2") #Verbosity (from 1 to 13)
+        b2_exe = self.bootstrap()
+        flags = self.get_build_flags()
+        # Help locating bzip2 and zlib
+        self.create_user_config_jam(self.build_folder)
 
         # JOIN ALL FLAGS
         b2_flags = " ".join(flags)
 
-        command = "b2" if self.settings.os == "Windows" else "./b2"
+        # command = "b2" if self.settings.os == "Windows" else "./b2"
 
-        full_command = "cd %s && %s %s -j%s" % (
-            self.FOLDER_NAME,
-            command,
-            b2_flags,
-            tools.cpu_count())
+        # full_command = "cd %s && %s %s -j%s" % (
+        #     self.FOLDER_NAME,
+        #     command,
+        #     b2_flags,
+        #     tools.cpu_count())
+        # self.output.warn(full_command)
+
+        # envs = self.prepare_deps_options_env()
+        # with tools.environment_append(envs):
+        #     self.run(full_command)#, output=False)
+
+
+        full_command = "%s %s -j%s --abbreviate-paths -d2" % (b2_exe, b2_flags, tools.cpu_count())
+        # -d2 is to print more debug info and avoid travis timing out without output
+        sources = os.path.join(self.source_folder, self.folder_name)
+        full_command += ' --debug-configuration --build-dir="%s"' % self.build_folder
         self.output.warn(full_command)
 
-        envs = self.prepare_deps_options_env()
-        with tools.environment_append(envs):
-            self.run(full_command)#, output=False)
+        with tools.vcvars(self.settings) if self.settings.compiler == "Visual Studio" else tools.no_op():
+            with tools.chdir(sources):
+                # to locate user config jam (BOOST_BUILD_PATH)
+                with tools.environment_append({"BOOST_BUILD_PATH": self.build_folder}):
+                    # To show the libraries *1
+                    # self.run("%s --show-libraries" % b2_exe)
+                    self.run(full_command)
 
-    def config_options(self):
-        """ First configuration step. Only settings are defined. Options can be removed
-        according to these settings
-        """
+    def get_build_flags(self):
+
+        # flags = []
+
+        # if self.settings.compiler == "Visual Studio":
+        #     flags.append("toolset=msvc-%s" % self._msvc_version())
+        # elif self.settings.compiler == "gcc":
+        #     # For GCC we only need the major version otherwhise Boost doesn't find the compiler
+        #     #flags.append("toolset=%s-%s"% (self.settings.compiler, self._gcc_short_version(self.settings.compiler.version)))
+        #     flags.append("toolset=gcc")
+        # elif str(self.settings.compiler) in ["clang"]:
+        #     flags.append("toolset=%s-%s"% (self.settings.compiler, self.settings.compiler.version))
+
+
+        if tools.cross_building(self.settings):
+            flags = self.get_build_cross_flags()
+        else:
+            flags = []
+            if self.settings.arch == 'x86' and 'address-model=32' not in flags:
+                flags.append('address-model=32')
+            elif self.settings.arch == 'x86_64' and 'address-model=64' not in flags:
+                flags.append('address-model=64')
+
+        if self.settings.compiler == "gcc":
+            flags.append("--layout=system")
+
+        if self.settings.compiler == "Visual Studio" and self.settings.compiler.runtime:
+            flags.append("runtime-link=%s" % ("static" if "MT" in str(self.settings.compiler.runtime) else "shared"))
+
+        if self.settings.os == "Windows" and self.settings.compiler == "gcc":
+            flags.append("threading=multi")
+
+        flags.append("link=%s" % ("static" if not self.options.shared else "shared"))
+        flags.append("variant=%s" % str(self.settings.build_type).lower())
+
+
+
+        # option_names = {
+        #     "--without-atomic": self.options.without_atomic,
+        #     "--without-chrono": self.options.without_chrono,
+        #     "--without-container": self.options.without_container,
+        #     "--without-context": self.options.without_context,
+        #     "--without-coroutine": self.options.without_coroutine,
+        #     "--without-date_time": self.options.without_date_time,
+        #     "--without-exception": self.options.without_exception,
+        #     "--without-fiber": self.options.without_fiber,
+        #     "--without-filesystem": self.options.without_filesystem,
+        #     "--without-graph": self.options.without_graph,
+        #     "--without-graph_parallel": self.options.without_graph_parallel,
+        #     "--without-iostreams": self.options.without_iostreams,
+        #     "--without-locale": self.options.without_locale,
+        #     "--without-log": self.options.without_log,
+        #     "--without-math": self.options.without_math,
+        #     "--without-mpi": self.options.without_mpi,
+        #     "--without-program_options": self.options.without_program_options,
+        #     "--without-random": self.options.without_random,
+        #     "--without-regex": self.options.without_regex,
+        #     "--without-serialization": self.options.without_serialization,
+        #     "--without-signals": self.options.without_signals,
+        #     "--without-stacktrace": self.options.without_stacktrace,
+        #     "--without-system": self.options.without_system,
+        #     "--without-test": self.options.without_test,
+        #     "--without-thread": self.options.without_thread,
+        #     "--without-timer": self.options.without_timer,
+        #     "--without-type_erasure": self.options.without_type_erasure,
+        #     "--without-wave": self.options.without_wave
+        # }
+        # for option_name, activated in option_names.items():
+        #     if activated:
+        #         flags.append(option_name)
+
+        for libname in lib_list:
+            if getattr(self.options, "without_%s" % libname):
+                flags.append("--without-%s" % libname)
+
+        # CXX FLAGS
+        cxx_flags = []
+        # fPIC DEFINITION
+        if self.options.fPIC and self.settings.compiler != "Visual Studio":
+            cxx_flags.append("-fPIC")
+
+        # try:
+        #     if self.settings.compiler in [ "gcc", "clang" ]:
+        #         cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
+
+        #     if self.settings.compiler != "Visual Studio":
+        #         cxx_flags.append("-Wno-deprecated-declarations")
+
+        #     if self.settings.compiler == "gcc":
+        #         if float(self.settings.compiler.version) >= 5:
+        #             flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+        #         else:
+        #             flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
+
+        #     if "clang" in str(self.settings.compiler):
+        #         if str(self.settings.compiler.libcxx) == "libc++":
+        #             cxx_flags.append("-stdlib=libc++")
+        #             cxx_flags.append("-std=c++11")
+        #             flags.append('linkflags="-stdlib=libc++"')
+        #         else:
+        #             cxx_flags.append("-stdlib=libstdc++")
+        #             cxx_flags.append("-std=c++11")
+        # except BaseException as e:
+        #     self.output.warn(str(e))
+
+
+        if self.settings.compiler != "Visual Studio":
+            cxx_flags.append("/DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE")
+
+        # Standalone toolchain fails when declare the std lib
+        if self.settings.os != "Android":
+            try:
+                if self.settings.compiler in [ "gcc", "clang" ]:
+                    cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
+
+                if self.settings.compiler != "Visual Studio":
+                    cxx_flags.append("-Wno-deprecated-declarations")
+
+                # if self.settings.compiler == "gcc":
+                #     if float(self.settings.compiler.version) >= 5:
+                #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+                #     else:
+                #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
+
+                if str(self.settings.compiler.libcxx) == "libstdc++":
+                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
+                elif str(self.settings.compiler.libcxx) == "libstdc++11":
+                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+
+                if "clang" in str(self.settings.compiler):
+                    if str(self.settings.compiler.libcxx) == "libc++":
+                        cxx_flags.append("-stdlib=libc++")
+                        cxx_flags.append("-std=c++11")
+                        flags.append('linkflags="-stdlib=libc++"')
+                    else:
+                        cxx_flags.append("-stdlib=libstdc++")
+                        cxx_flags.append("-std=c++11")
+            except:
+                pass
+            # except BaseException as e:
+            #     self.output.warn(str(e))
+
+
+        # cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
+        # flags.append(cxx_flags)
+        # flags.append("--without-python")
+        # flags.append("-d 2") #Verbosity (from 1 to 13)
+
+        cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
+        flags.append(cxx_flags)
+
+        return flags
+
+    def get_build_cross_flags(self):
+        arch = self.settings.get_safe('arch')
+        flags = []
+        self.output.info("Cross building, detecting compiler...")
+        flags.append('architecture=%s' % ('arm' if arch.startswith('arm') else arch))
+        bits = {"x86_64": "64", "armv8": "64"}.get(str(self.settings.arch), "32")
+        flags.append('address-model=%s' % bits)
+        if self.settings.get_safe('os').lower() in ('linux', 'android'):
+            flags.append('binary-format=elf')
+
+        if arch.startswith('arm'):
+            if 'hf' in arch:
+                flags.append('-mfloat-abi=hard')
+            flags.append('abi=aapcs')
+        elif arch in ["x86", "x86_64"]:
+            pass
+        else:
+            raise Exception("I'm so sorry! I don't know the appropriate ABI for "
+                            "your architecture. :'(")
+
+        self.output.info("Cross building flags: %s" % flags)
+        "android" "appletv" "bsd" "cygwin" "darwin" "freebsd" "haiku" "hpux" "iphone" "linux"
+        "netbsd" "openbsd" "osf" "qnx" "qnxnto" "sgi" "solaris" "unix" "unixware" "windows" "vms" "vxworks" "elf"
+
+        target = {"Windows": "windows",
+                  "Macos": "darwin",
+                  "Linux": "linux",
+                  "Android": "android",
+                  "iOS": "iphone",
+                  "watchOS": "iphone",
+                  "tvOS": "appletv",
+                  "freeBSD": "freebsd"}.get(str(self.settings.os), None)
+
+        if not target:
+            raise Exception("Unknown target for %s" % self.settings.os)
+
+        flags.append("target-os=%s" % target)
+        return flags
+
+    def create_user_config_jam(self, folder):
+        """To help locating the zlib and bzip2 deps"""
+        self.output.warn("Patching user-config.jam")
+
+        compiler_command = os.environ.get('CXX', None)
+
+        contents = ""
+        if self.zip_bzip2_requires_needed:
+            contents = "\nusing zlib : 1.2.11 : <include>%s <search>%s ;" % (
+                self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),
+                self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'))
+
+            # if self.settings.os == "Linux" or self.settings.os == "Macos":
+            #     contents += "\nusing bzip2 : 1.0.6 : <include>%s <search>%s ;" % (
+            #         self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
+            #         self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
+
+            contents += "\nusing bzip2 : 1.0.6 : <include>%s <search>%s ;" % (
+                self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
+                self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
+
+        if self.icu_requires_needed:
+            contents += "\nusing icu : 60.2 : <include>%s <search>%s ;" % (
+                self.deps_cpp_info["icu"].include_paths[0].replace('\\', '/'),
+                self.deps_cpp_info["icu"].lib_paths[0].replace('\\', '/'))
+
+        toolset, version, exe = self.get_toolset_version_and_exe()
+        exe = compiler_command or exe  # Prioritize CXX
+        # Specify here the toolset with the binary if present if don't empty parameter : :
+        contents += '\nusing "%s" : "%s" : ' % (toolset, version)
+        contents += ' "%s"' % exe.replace("\\", "/")
+
+        contents += " : \n"
+        if "AR" in os.environ:
+            contents += '<archiver>"%s" ' % tools.which(os.environ["AR"]).replace("\\", "/")
+        if "RANLIB" in os.environ:
+            contents += '<ranlib>"%s" ' % tools.which(os.environ["RANLIB"]).replace("\\", "/")
+        if "CXXFLAGS" in os.environ:
+            contents += '<cxxflags>"%s" ' % os.environ["CXXFLAGS"]
+        if "CFLAGS" in os.environ:
+            contents += '<cflags>"%s" ' % os.environ["CFLAGS"]
+        if "LDFLAGS" in os.environ:
+            contents += '<ldflags>"%s" ' % os.environ["LDFLAGS"]
+        contents += " ;"
+
+        self.output.warn(contents)
+        filename = "%s/user-config.jam" % folder
+        tools.save(filename,  contents)
+
+    def get_toolset_version_and_exe(self):
+        compiler_version = str(self.settings.compiler.version)
+        compiler = str(self.settings.compiler)
         if self.settings.compiler == "Visual Studio":
-            self.options.remove("fPIC")
+            cversion = self.settings.compiler.version
+            _msvc_version = "14.1" if cversion == "15" else "%s.0" % cversion
+            return "msvc", _msvc_version, ""
+        elif not self.settings.os == "Windows" and compiler == "gcc" and compiler_version[0] >= "5":
+            # For GCC >= v5 we only need the major otherwise Boost doesn't find the compiler
+            # The NOT windows check is necessary to exclude MinGW:
+            if not tools.which("g++-%s" % compiler_version[0]):
+                # In fedora 24, 25 the gcc is 6, but there is no g++-6 and the detection is 6.3.1
+                # so b2 fails because 6 != 6.3.1. Specify the exe to avoid the smart detection
+                executable = "g++"
+            else:
+                executable = ""
+            return compiler, compiler_version[0], executable
+        elif str(self.settings.compiler) in ["clang", "gcc"]:
+            # For GCC < v5 and Clang we need to provide the entire version string
+            return compiler, compiler_version, ""
+        elif self.settings.compiler == "apple-clang":
+            return "clang", compiler_version, ""
+        elif self.settings.compiler == "sun-cc":
+            return "sunpro", compiler_version, ""
+        else:
+            return compiler, compiler_version, ""
 
-    def configure(self):
-        """ Second configuration step. Both settings and options have values, in this case
-        we can force static library if MT was specified as runtime
-        """
-        if self.settings.compiler == "Visual Studio" and \
-           self.options.shared and "MT" in str(self.settings.compiler.runtime):
-            self.options.shared = False
+    ##################### BOOSTRAP METHODS ###########################
 
-        if self.options.header_only:
-            # Should be doable in conan_info() but the UX is not ready
-            self.options.remove("shared")
-            self.options.remove("fPIC")
+        # toolset = "darwin" if self.settings.os == "Macos" else self.settings.compiler
+        
+        # # command = "bootstrap" if self.settings.os == "Windows" else "./bootstrap.sh --with-toolset=%s" % self.settings.compiler
+        # command = ""
+        # if self.settings.os == "Windows":
+        #     if self.settings.compiler == "gcc":
+        #         command = "bootstrap gcc"
+        #     else:
+        #         command = "bootstrap"
+        # else:
+        #     command = "./bootstrap.sh --with-toolset=%s" % toolset
+        
+        # try:
+        #     self.run("cd %s && %s" % (self.FOLDER_NAME, command))
 
-        if not self.options.without_iostreams:
-            if self.settings.os == "Linux" or self.settings.os == "Macos":
-                self.requires("bzip2/1.0.6@bitprim/stable")
-                if not self.options.header_only:
-                    self.options["bzip2/1.0.6"].shared = self.options.shared
+        #     self.run("cd %s && type bootstrap.log" % self.FOLDER_NAME
+        #             if self.settings.os == "Windows"
+        #             else "cd %s && cat bootstrap.log" % self.FOLDER_NAME)
 
-            self.requires("zlib/1.2.8@bitprim/stable")
-            if not self.options.header_only:
-                self.options["zlib"].shared = self.options.shared
+        # except:
+        #     self.run("cd %s && type bootstrap.log" % self.FOLDER_NAME
+        #             if self.settings.os == "Windows"
+        #             else "cd %s && cat bootstrap.log" % self.FOLDER_NAME)
+        #     raise
+
+    def _get_boostrap_toolset(self):
+        if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
+            comp_ver = self.settings.compiler.version
+            return "vc%s" % ("141" if comp_ver == "15" else comp_ver)
+
+        with_toolset = {"apple-clang": "darwin"}.get(str(self.settings.compiler),
+                                                     str(self.settings.compiler))
+        return with_toolset
+
+    def bootstrap(self):
+        folder = os.path.join(self.source_folder, self.folder_name, "tools", "build")
+        try:
+            bootstrap = "bootstrap.bat" if tools.os_info.is_windows else "./bootstrap.sh"
+            with tools.vcvars(self.settings) if self.settings.compiler == "Visual Studio" else tools.no_op():
+                self.output.info("Using %s %s" % (self.settings.compiler, self.settings.compiler.version))
+                with tools.chdir(folder):
+                    cmd = "%s %s" % (bootstrap, self._get_boostrap_toolset())
+                    self.output.info(cmd)
+                    self.run(cmd)
+        except Exception as exc:
+            self.output.warn(str(exc))
+            if os.path.join(folder, "bootstrap.log"):
+                self.output.warn(tools.load(os.path.join(folder, "bootstrap.log")))
+            raise
+        return os.path.join(folder, "b2.exe") if tools.os_info.is_windows else os.path.join(folder, "b2")
+
+    ####################################################################
 
     def package(self):
-        # Copy findZLIB.cmake to package
-        self.copy("FindBoost.cmake", ".", ".")
-        self.copy("OriginalFindBoost*", ".", ".")
+        # # Copy findZLIB.cmake to package
+        # self.copy("FindBoost.cmake", ".", ".")
+        # self.copy("OriginalFindBoost*", ".", ".")
 
-        self.copy(pattern="*", dst="include/boost", src="%s/boost" % self.FOLDER_NAME)
-        self.copy(pattern="*.a", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
-        self.copy(pattern="*.so", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
-        self.copy(pattern="*.so.*", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
-        self.copy(pattern="*.dylib*", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
-        self.copy(pattern="*.lib", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
-        self.copy(pattern="*.dll", dst="bin", src="%s/stage/lib" % self.FOLDER_NAME)
+        # self.copy(pattern="*", dst="include/boost", src="%s/boost" % self.FOLDER_NAME)
+        # self.copy(pattern="*.a", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
+        # self.copy(pattern="*.so", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
+        # self.copy(pattern="*.so.*", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
+        # self.copy(pattern="*.dylib*", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
+        # self.copy(pattern="*.lib", dst="lib", src="%s/stage/lib" % self.FOLDER_NAME)
+        # self.copy(pattern="*.dll", dst="bin", src="%s/stage/lib" % self.FOLDER_NAME)
 
-    def package_id(self):
-        """ if it is header only, the requirements, settings and options do not affect the package ID
-        so they should be removed, so just 1 package for header only is generated, not one for each
-        different compiler and option. This is the last step, after build, and package
-        """
-        if self.options.header_only:
-            self.info.requires.clear()
-            self.info.settings.clear()
+
+        # This stage/lib is in source_folder... Face palm, looks like it builds in build but then
+        # copy to source with the good lib name
+        out_lib_dir = os.path.join(self.folder_name, "stage", "lib")
+        self.copy(pattern="*", dst="include/boost", src="%s/boost" % self.folder_name)
+        if not self.options.shared:
+            self.copy(pattern="*.a", dst="lib", src=out_lib_dir, keep_path=False)
+        self.copy(pattern="*.so", dst="lib", src=out_lib_dir, keep_path=False, symlinks=True)
+        self.copy(pattern="*.so.*", dst="lib", src=out_lib_dir, keep_path=False, symlinks=True)
+        self.copy(pattern="*.dylib*", dst="lib", src=out_lib_dir, keep_path=False)
+        self.copy(pattern="*.lib", dst="lib", src=out_lib_dir, keep_path=False)
+        self.copy(pattern="*.dll", dst="bin", src=out_lib_dir, keep_path=False)
+
+        # When first call with source do not package anything
+        if not os.path.exists(os.path.join(self.package_folder, "lib")):
+            return
+
+        self.renames_to_make_cmake_find_package_happy()
+
+    def renames_to_make_cmake_find_package_happy(self):
+        # CMake findPackage help
+        renames = []
+        for libname in os.listdir(os.path.join(self.package_folder, "lib")):
+            new_name = libname
+            libpath = os.path.join(self.package_folder, "lib", libname)
+            if self.settings.compiler == "Visual Studio":
+                if new_name.startswith("lib"):
+                    if os.path.isfile(libpath):
+                        new_name = libname[3:]
+                if "-s-" in libname:
+                    new_name = new_name.replace("-s-", "-")
+                elif "-sgd-" in libname:
+                    new_name = new_name.replace("-sgd-", "-gd-")
+
+            for arch in ["x", "a", "i", "s", "m", "p"]:  # Architectures
+                for addr in ["32", "64"]:  # Model address
+                    new_name = new_name.replace("-%s%s-" % (arch, addr), "-")
+
+            renames.append([libpath, os.path.join(self.package_folder, "lib", new_name)])
+
+        for original, new in renames:
+            if original != new and not os.path.exists(new):
+                self.output.info("Rename: %s => %s" % (original, new))
+                os.rename(original, new)
+
+    # def package_info(self):
+
+    #     if not self.options.header_only and self.options.shared:
+    #         self.cpp_info.defines.append("BOOST_ALL_DYN_LINK")
+    #     else:
+    #         self.cpp_info.defines.append("BOOST_USE_STATIC_LIBS")
+
+    #     if self.options.header_only:
+    #         return
+
+    #     #Select binaries to package looking at the options
+    #     libs = []
+    #     for option, option_value in self.options.items():
+    #         if option.startswith("without_") and option_value == "False":
+    #             libs.extend(self.libs_by_option[option.replace("without_", "")])
+
+        
+
+
+
+    #     # if self.settings.compiler != "Visual Studio":
+    #     if self.settings.os != "Windows":
+    #         self.cpp_info.libs.extend(["boost_%s" % lib for lib in libs])
+    #         # self.cpp_info.libs = self.collect_libs()
+
+    #         print("self.cpp_info.libs")
+    #         print(self.cpp_info.libs)
+            
+    #         print("self.collect_libs()")
+    #         print(self.collect_libs())
+
+    #     else:
+    #         # http://www.boost.org/doc/libs/1_55_0/more/getting_started/windows.html
+    #         version = "_".join(self.version.split(".")[0:2])
+    #         if self.settings.compiler == "Visual Studio":
+    #             win_libs = []
+    #             visual_version = self._msvc_version()
+    #             runtime = "mt" # str(self.settings.compiler.runtime).lower()
+    #             arch = "x64"
+
+    #             abi_tags = []
+    #             if self.settings.compiler.runtime in ("MTd", "MT"):
+    #                 abi_tags.append("s")
+
+    #             if self.settings.build_type == "Debug":
+    #                 abi_tags.append("gd")
+
+    #             abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
+
+                
+    #             suffix = "vc%s-%s%s-%s-%s" %  (visual_version.replace(".", ""), runtime, abi_tags, arch, version)
+    #             prefix = "lib" if not self.options.shared else ""
+
+    #             win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
+    #             win_libs.extend(["libboost_exception-%s" % suffix, "libboost_test_exec_monitor-%s" % suffix])
+
+    #             #self.output.warn("EXPORTED BOOST LIBRARIES: %s" % win_libs)
+    #             self.cpp_info.libs.extend(win_libs)
+    #             self.cpp_info.defines.extend(["BOOST_ALL_NO_LIB"]) # DISABLES AUTO LINKING! NO SMART AND MAGIC DECISIONS THANKS!
+    #         else:
+    #             win_libs = []
+    #             mingw_version = self._mingw_version()
+    #             runtime = "mt" # str(self.settings.compiler.runtime).lower()
+    #             arch = "x64"
+
+    #             abi_tags = []
+
+    #             if self.settings.build_type == "Debug":
+    #                 abi_tags.append("d")
+    #                 # abi_tags.append("gd")
+
+    #             abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
+
+    #             suffix = "mgw%s-%s%s-%s-%s" %  (mingw_version.replace(".", ""), runtime, abi_tags, arch, version)
+    #             #prefix = "lib" if not self.options.shared else ""
+    #             prefix = ""
+
+    #             win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
+    #             win_libs.extend(["boost_exception-%s" % suffix, "boost_test_exec_monitor-%s" % suffix])
+
+    #             #self.output.warn("EXPORTED BOOST LIBRARIES: %s" % win_libs)
+    #             self.cpp_info.libs.extend(win_libs)
+    #             self.cpp_info.defines.extend(["BOOST_ALL_NO_LIB"]) # DISABLES AUTO LINKING! NO SMART AND MAGIC DECISIONS THANKS!
+
 
     def package_info(self):
+        gen_libs = tools.collect_libs(self)
+
+        self.cpp_info.libs = [None for _ in range(len(lib_list))]
+
+        # The order is important, reorder following the lib_list order
+        missing_order_info = []
+        for real_lib_name in gen_libs:
+            for pos, alib in enumerate(lib_list):
+                if os.path.splitext(real_lib_name)[0].split("-")[0].endswith(alib):
+                    self.cpp_info.libs[pos] = real_lib_name
+                    break
+            else:
+                self.output.info("Missing in order: %s" % real_lib_name)
+                missing_order_info.append(real_lib_name)  # Assume they do not depend on other
+
+        self.cpp_info.libs = [x for x in self.cpp_info.libs if x is not None] + missing_order_info
+
+        if self.options.without_test:  # remove boost_unit_test_framework
+            self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "unit_test" not in lib]
+
+        self.output.info("LIBRARIES: %s" % self.cpp_info.libs)
+        self.output.info("Package folder: %s" % self.package_folder)
 
         if not self.options.header_only and self.options.shared:
             self.cpp_info.defines.append("BOOST_ALL_DYN_LINK")
         else:
             self.cpp_info.defines.append("BOOST_USE_STATIC_LIBS")
 
-        if self.options.header_only:
-            return
+        if not self.options.header_only:
+            if not self.options.without_python:
+                if not self.options.shared:
+                    self.cpp_info.defines.append("BOOST_PYTHON_STATIC_LIB")
 
-        #Select binaries to package looking at the options
-        libs = []
-        for option, option_value in self.options.items():
-            if option.startswith("without_") and option_value == "False":
-                libs.extend(self.libs_by_option[option.replace("without_", "")])
-
-        
-
-
-
-        # if self.settings.compiler != "Visual Studio":
-        if self.settings.os != "Windows":
-            self.cpp_info.libs.extend(["boost_%s" % lib for lib in libs])
-            # self.cpp_info.libs = self.collect_libs()
-
-            print("self.cpp_info.libs")
-            print(self.cpp_info.libs)
-            
-            print("self.collect_libs()")
-            print(self.collect_libs())
-
-        else:
-            # http://www.boost.org/doc/libs/1_55_0/more/getting_started/windows.html
-            version = "_".join(self.version.split(".")[0:2])
             if self.settings.compiler == "Visual Studio":
-                win_libs = []
-                visual_version = self._msvc_version()
-                runtime = "mt" # str(self.settings.compiler.runtime).lower()
-                arch = "x64"
-
-                abi_tags = []
-                if self.settings.compiler.runtime in ("MTd", "MT"):
-                    abi_tags.append("s")
-
-                if self.settings.build_type == "Debug":
-                    abi_tags.append("gd")
-
-                abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
-
-                
-                suffix = "vc%s-%s%s-%s-%s" %  (visual_version.replace(".", ""), runtime, abi_tags, arch, version)
-                prefix = "lib" if not self.options.shared else ""
-
-                win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
-                win_libs.extend(["libboost_exception-%s" % suffix, "libboost_test_exec_monitor-%s" % suffix])
-
-                #self.output.warn("EXPORTED BOOST LIBRARIES: %s" % win_libs)
-                self.cpp_info.libs.extend(win_libs)
-                self.cpp_info.defines.extend(["BOOST_ALL_NO_LIB"]) # DISABLES AUTO LINKING! NO SMART AND MAGIC DECISIONS THANKS!
-            else:
-                win_libs = []
-                mingw_version = self._mingw_version()
-                runtime = "mt" # str(self.settings.compiler.runtime).lower()
-                arch = "x64"
-
-                abi_tags = []
-
-                if self.settings.build_type == "Debug":
-                    abi_tags.append("d")
-                    # abi_tags.append("gd")
-
-                abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
-
-                suffix = "mgw%s-%s%s-%s-%s" %  (mingw_version.replace(".", ""), runtime, abi_tags, arch, version)
-                #prefix = "lib" if not self.options.shared else ""
-                prefix = ""
-
-                win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
-                win_libs.extend(["boost_exception-%s" % suffix, "boost_test_exec_monitor-%s" % suffix])
-
-                #self.output.warn("EXPORTED BOOST LIBRARIES: %s" % win_libs)
-                self.cpp_info.libs.extend(win_libs)
-                self.cpp_info.defines.extend(["BOOST_ALL_NO_LIB"]) # DISABLES AUTO LINKING! NO SMART AND MAGIC DECISIONS THANKS!
-
-# # if self.settings.os == "Windows":
-# libboost_atomic-vc140-mt-s-1_64.lib
-# libboost_atomic-mgw71-mt-1_64.a
-# libboost_chrono-vc140-mt-s-1_64.lib
+                # DISABLES AUTO LINKING! NO SMART AND MAGIC DECISIONS THANKS!
+                self.cpp_info.defines.extend(["BOOST_ALL_NO_LIB"])
 
 
-    def prepare_deps_options_env(self):
-        ret = {}
-#         if self.settings.os == "Linux" and "bzip2" in self.requires:
-#             include_path = self.deps_cpp_info["bzip2"].include_paths[0]
-#             lib_path = self.deps_cpp_info["bzip2"].lib_paths[0]
-#             lib_name = self.deps_cpp_info["bzip2"].libs[0]
-#             ret["BZIP2_BINARY"] = lib_name
-#             ret["BZIP2_INCLUDE"] = include_path
-#             ret["BZIP2_LIBPATH"] = lib_path
 
-        return ret
+#     def prepare_deps_options_env(self):
+#         ret = {}
+# #         if self.settings.os == "Linux" and "bzip2" in self.requires:
+# #             include_path = self.deps_cpp_info["bzip2"].include_paths[0]
+# #             lib_path = self.deps_cpp_info["bzip2"].lib_paths[0]
+# #             lib_name = self.deps_cpp_info["bzip2"].libs[0]
+# #             ret["BZIP2_BINARY"] = lib_name
+# #             ret["BZIP2_INCLUDE"] = include_path
+# #             ret["BZIP2_LIBPATH"] = lib_path
 
-    def source(self):
-        zip_name = "%s.zip" % self.FOLDER_NAME if sys.platform == "win32" else "%s.tar.gz" % self.FOLDER_NAME
-        # url = "http://sourceforge.net/projects/boost/files/boost/%s/%s/download" % (self.version, zip_name)
-        url = "https://dl.bintray.com/boostorg/release/%s/source/%s" % (self.version, zip_name)
+#         return ret
 
-        self.output.info("Downloading %s..." % url)
-        tools.download(url, zip_name)
-        tools.unzip(zip_name, ".")
-        os.unlink(zip_name)
 
-    def _msvc_version(self):
-        if self.settings.compiler.version == "15":
-            return "14.1"
-        else:
-            return "%s.0" % self.settings.compiler.version
 
-    def _mingw_version(self):
-        return "%s" % self.settings.compiler.version
+    # def _msvc_version(self):
+    #     if self.settings.compiler.version == "15":
+    #         return "14.1"
+    #     else:
+    #         return "%s.0" % self.settings.compiler.version
 
-    def _gcc_short_version(self, version):
-        return str(version)[0]
+    # def _mingw_version(self):
+    #     return "%s" % self.settings.compiler.version
+
+    # def _gcc_short_version(self, version):
+    #     return str(version)[0]
 

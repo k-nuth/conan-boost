@@ -4,11 +4,11 @@ import os
 
 channel = os.getenv("CONAN_CHANNEL", "stable")
 username = os.getenv("CONAN_USERNAME", "bitprim")
-
+version = "1.66.0"
 
 class BitprimconanboostTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "bitprim-conan-boost/0.1@%s/%s" % (username, channel)
+    requires = "boost/%s@%s/%s" % (version, username, channel)
     generators = "cmake"
 
     def build(self):
