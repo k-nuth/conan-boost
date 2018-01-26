@@ -436,19 +436,20 @@ class BitprimConanBoost(ConanFile):
                 #     else:
                 #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
 
-                if str(self.settings.compiler.libcxx) == "libstdc++":
-                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
-                elif str(self.settings.compiler.libcxx) == "libstdc++11":
-                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+                if self.settings.compiler == "gcc":
+                    if str(self.settings.compiler.libcxx) == "libstdc++":
+                        flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
+                    elif str(self.settings.compiler.libcxx) == "libstdc++11":
+                        flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
 
                 if "clang" in str(self.settings.compiler):
                     if str(self.settings.compiler.libcxx) == "libc++":
                         cxx_flags.append("-stdlib=libc++")
-                        cxx_flags.append("-std=c++11")
+                        # cxx_flags.append("-std=c++11")
                         flags.append('linkflags="-stdlib=libc++"')
                     else:
                         cxx_flags.append("-stdlib=libstdc++")
-                        cxx_flags.append("-std=c++11")
+                        # cxx_flags.append("-std=c++11")
             except:
                 pass
             # except BaseException as e:
