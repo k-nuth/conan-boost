@@ -49,13 +49,13 @@ class BitprimConanBoost(ConanFile):
     }
     options.update({"without_%s" % libname: [True, False] for libname in lib_list})
 
-    #default_options = ["shared=False", "header_only=False", "fPIC=True"]
-    #default_options.extend(["without_%s=False" % libname for libname in lib_list if libname != "python"])
-    #default_options.append("without_python=True")
-    #default_options = tuple(default_options)
+    # default_options = ["shared=False", "header_only=False", "fPIC=True"]
+    # default_options.extend(["without_%s=False" % libname for libname in lib_list if libname != "python"])
+    # default_options.append("without_python=True")
+    # default_options = tuple(default_options)
 
-    default_options = ["shared=False", "header_only=False", "fPIC=True", 
-        "python=True", "without_atomic=False", "without_chrono=False", 
+    default_options = tuple(["shared=False", "header_only=False", "fPIC=True",
+        "without_python=True", "without_atomic=False", "without_chrono=False", 
         "without_container=True", "without_context=True", "without_coroutine=True", 
         "without_date_time=False", "without_exception=False", "without_fiber=True", 
         "without_filesystem=False", "without_graph=True", "without_graph_parallel=True", 
@@ -64,8 +64,14 @@ class BitprimConanBoost(ConanFile):
         "without_random=False", "without_regex=False", "without_serialization=True", 
         "without_signals=True", "without_stacktrace=True", "without_system=False", 
         "without_test=False", "without_thread=False", "without_timer=False", 
-        "without_type_erasure=True", "without_wave=True"]
+        "without_type_erasure=True", "without_wave=True"])
 
+
+    # default_options = ['without_math=True', 'without_wave=True', 'without_container=True', 'without_exception=True', 'without_graph=True', 'without_iostreams=True', 'without_locale=True', 'without_log=True',
+    #                    'without_program_options=True', 'without_random=True', 'without_regex=True', 'without_mpi=True', 'without_serialization=True', 'without_signals=True',
+    #                    'without_coroutine=True', 'without_fiber=True', 'without_context=True', 'without_timer=True', 'without_thread=True', 'without_chrono=True', 'without_date_time=True',
+    #                    'without_atomic=True', 'without_filesystem=True', 'without_system=True', 'without_graph_parallel=True', 'without_python=True',
+    #                    'without_stacktrace=True', 'without_test=True', 'without_type_erasure=True']
 
 
     url = "https://github.com/bitprim/bitprim-conan-boost"
@@ -122,6 +128,7 @@ class BitprimConanBoost(ConanFile):
         return "MT" in str(self.settings.compiler.runtime)
 
     def requirements(self):
+        self.output.info('def requirements(self):')
         if self.zip_bzip2_requires_needed:
             self.requires("bzip2/1.0.6@bitprim/stable")
             self.options["bzip2"].shared = self.options.shared #False
@@ -134,13 +141,15 @@ class BitprimConanBoost(ConanFile):
             self.options["icu"].shared = self.options.shared #False
 
     def config_options(self):
+        self.output.info('def config_options(self):')
         if self.settings.compiler == "Visual Studio":
             self.options.remove("fPIC")
 
-            # if self.options.shared and self.msvc_mt_build:
-            #     self.options.remove("shared")
+            if self.options.shared and self.msvc_mt_build:
+                self.options.remove("shared")
 
     def configure(self):
+        self.output.info('def configure(self):')
         if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
             self.options.shared = False
 
@@ -172,10 +181,12 @@ class BitprimConanBoost(ConanFile):
     #         self.info.settings.clear()
 
     def package_id(self):
+        self.output.info('def package_id(self):')
         if self.options.header_only:
             self.info.header_only()
 
     def source(self):
+        self.output.info('def source(self):')
         zip_name = "%s.zip" % self.folder_name if sys.platform == "win32" else "%s.tar.gz" % self.folder_name
         #url = "http://sourceforge.net/projects/boost/files/boost/%s/%s/download" % (self.version, zip_name)
         url = "https://dl.bintray.com/boostorg/release/%s/source/%s" % (self.version, zip_name)
@@ -188,6 +199,7 @@ class BitprimConanBoost(ConanFile):
     ##################### BUILDING METHODS ###########################
 
     def build(self):
+        self.output.info('def build(self):')
         if self.options.header_only:
             self.output.warn("Header only package, skipping build")
             return
