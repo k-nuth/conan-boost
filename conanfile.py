@@ -140,7 +140,7 @@ class BitprimConanBoost(ConanFile):
             if self.options.shared and msvc_mt_build:
                 self.options.remove("shared")
 
-    def configure(self):
+    # def configure(self):
         # if self.settings.compiler == "Visual Studio" and self.options.shared and msvc_mt_build:
         #     self.options.shared = False
 
