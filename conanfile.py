@@ -644,7 +644,7 @@ class BitprimConanBoost(ConanFile):
         # folder = os.path.join(self.source_folder, self.folder_name, "tools", "build")
         folder = os.path.join(self.source_folder, self.folder_name)
 
-        if self.use_icu:
+        if self.use_icu and self.settings.os != "Windows":
             self.output.info('icu_path: %s' % (self._get_icu_path(),))
             with_icu_str = '--with-icu=%s' % (self._get_icu_path(),)
 
