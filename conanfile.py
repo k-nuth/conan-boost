@@ -116,11 +116,11 @@ class BitprimConanBoost(ConanFile):
 
 
     @property
-    def zip_bzip2_requires_needed(self):
+    def use_zip_bzip2(self):
         return not self.options.without_iostreams and not self.options.header_only
 
     @property
-    def icu_requires_needed(self):
+    def use_icu(self):
         return not self.options.header_only and (not self.options.without_regex or not self.options.without_locale)
 
     @property
@@ -129,14 +129,14 @@ class BitprimConanBoost(ConanFile):
 
     def requirements(self):
         self.output.info('def requirements(self):')
-        if self.zip_bzip2_requires_needed:
+        if self.use_zip_bzip2:
             self.requires("bzip2/1.0.6@bitprim/stable")
             self.options["bzip2"].shared = self.options.shared #False
             
             self.requires("zlib/1.2.11@bitprim/stable")
             self.options["zlib"].shared = self.options.shared #False
 
-        if self.icu_requires_needed:
+        if self.use_icu:
             self.requires("icu/60.2@bitprim/stable")
             self.options["icu"].shared = self.options.shared #False
 
@@ -163,14 +163,14 @@ class BitprimConanBoost(ConanFile):
         #     if not self.options.header_only:
         #         self.options["zlib"].shared = self.options.shared
 
-        # if self.zip_bzip2_requires_needed:
+        # if self.use_zip_bzip2:
         #     self.requires("bzip2/1.0.6@bitprim/stable")
         #     self.options["bzip2"].shared = self.options.shared #False
             
         #     self.requires("zlib/1.2.11@bitprim/stable")
         #     self.options["zlib"].shared = self.options.shared #False
 
-        # if self.icu_requires_needed:
+        # if self.use_icu:
         #     self.requires("icu/60.2@bitprim/stable")
         #     self.options["icu"].shared = self.options.shared #False
 
@@ -204,10 +204,46 @@ class BitprimConanBoost(ConanFile):
             self.output.warn("Header only package, skipping build")
             return
 
+
+        boost_build_folder = os.path.join(self.build_folder, self.folder_name)
+
+        self.output.info(self.build_folder)
+        self.output.info(boost_build_folder)
+
+
+        replace_str = "int main() { return 0; }"
+        # REGEX_TEST="libs/regex/build/has_icu_test.cpp"
+        # LOCALE_TEST="libs/locale/build/has_icu_test.cpp"
+        regex_test = os.path.join(boost_build_folder, 'libs', 'regex', 'build', 'has_icu_test.cpp')
+        locale_test = os.path.join(boost_build_folder, 'libs', 'locale', 'build', 'has_icu_test.cpp')
+
+        self.output.info(regex_test)
+        self.output.info(locale_test)
+
+
+        # with open(regex_test, 'r') as fin:
+        #     print(fin.read())
+
+        # with open(locale_test, 'r') as fin:
+        #     print(fin.read())
+
+        with open(regex_test, "w") as f:
+            f.write(replace_str)
+
+        with open(locale_test, "w") as f:
+            f.write(replace_str)
+
+        with open(regex_test, 'r') as fin:
+            print(fin.read())
+
+        with open(locale_test, 'r') as fin:
+            print(fin.read())
+
+
         b2_exe = self.bootstrap()
         flags = self.get_build_flags()
         # Help locating bzip2 and zlib
-        self.create_user_config_jam(self.build_folder)
+        # self.create_user_config_jam(self.build_folder)
 
         # JOIN ALL FLAGS
         b2_flags = " ".join(flags)
@@ -263,19 +299,55 @@ class BitprimConanBoost(ConanFile):
             elif self.settings.arch == 'x86_64' and 'address-model=64' not in flags:
                 flags.append('address-model=64')
 
+
         if self.settings.compiler == "gcc":
             flags.append("--layout=system")
 
         if self.settings.compiler == "Visual Studio" and self.settings.compiler.runtime:
             flags.append("runtime-link=%s" % ("static" if self.msvc_mt_build else "shared"))
 
-        if self.settings.os == "Windows" and self.settings.compiler == "gcc":
-            flags.append("threading=multi")
+        # if self.settings.os == "Windows" and self.settings.compiler == "gcc":
+        #     flags.append("threading=multi")
+        flags.append("threading=multi")
 
         flags.append("link=%s" % ("static" if not self.options.shared else "shared"))
         flags.append("variant=%s" % str(self.settings.build_type).lower())
 
+        flags.append("--reconfigure")
 
+        
+
+
+        # if not self.options.without_locale:
+        #     flags.append("boost.locale.iconv=off")
+        #     flags.append("boost.locale.posix=off")
+
+
+
+    # #   # Just from icu
+    #     print("--------- FROM icu -------------")
+    # #   print(self.deps_cpp_info["icu"].include_paths)
+    # #   print(self.deps_cpp_info["icu"].lib_paths)
+    # #   print(self.deps_cpp_info["icu"].bin_paths)
+    #     print(self.deps_cpp_info["icu"].libs)
+    # #   print(self.deps_cpp_info["icu"].defines)
+    # #   print(self.deps_cpp_info["icu"].cflags)
+    # #   print(self.deps_cpp_info["icu"].cppflags)
+    # #   print(self.deps_cpp_info["icu"].sharedlinkflags)
+    # #   print(self.deps_cpp_info["icu"].exelinkflags)
+
+
+        if self.use_icu:
+            flags.append("-sICU_PATH=%s" % (self._get_icu_path(),))
+            # flags.append("-sICU_LINK=${ICU_LIBS[@]}")
+
+        if self.use_zip_bzip2:
+            flags.append("-sZLIB_LIBPATH=%s" % (self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'),))
+            flags.append("-sZLIB_INCLUDE=%s" % (self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),))
+            flags.append("-sBZIP2_LIBPATH=%s" % (self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'),))
+            flags.append("-sBZIP2_INCLUDE=%s" % (self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),))
+
+        
 
         # option_names = {
         #     "--without-atomic": self.options.without_atomic,
@@ -346,7 +418,7 @@ class BitprimConanBoost(ConanFile):
         #     self.output.warn(str(e))
 
 
-        if self.settings.compiler != "Visual Studio":
+        if self.settings.compiler == "Visual Studio":
             cxx_flags.append("/DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE")
 
         # Standalone toolchain fails when declare the std lib
@@ -414,8 +486,8 @@ class BitprimConanBoost(ConanFile):
                             "your architecture. :'(")
 
         self.output.info("Cross building flags: %s" % flags)
-        "android" "appletv" "bsd" "cygwin" "darwin" "freebsd" "haiku" "hpux" "iphone" "linux"
-        "netbsd" "openbsd" "osf" "qnx" "qnxnto" "sgi" "solaris" "unix" "unixware" "windows" "vms" "vxworks" "elf"
+        # "android" "appletv" "bsd" "cygwin" "darwin" "freebsd" "haiku" "hpux" "iphone" "linux"
+        # "netbsd" "openbsd" "osf" "qnx" "qnxnto" "sgi" "solaris" "unix" "unixware" "windows" "vms" "vxworks" "elf"
 
         target = {"Windows": "windows",
                   "Macos": "darwin",
@@ -439,7 +511,7 @@ class BitprimConanBoost(ConanFile):
         compiler_command = os.environ.get('CXX', None)
 
         contents = ""
-        if self.zip_bzip2_requires_needed:
+        if self.use_zip_bzip2:
             contents = "\nusing zlib : 1.2.11 : <include>%s <search>%s ;" % (
                 self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),
                 self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'))
@@ -453,10 +525,10 @@ class BitprimConanBoost(ConanFile):
                 self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
                 self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
 
-        if self.icu_requires_needed:
-            contents += "\nusing icu : 60.2 : <include>%s <search>%s ;" % (
-                self.deps_cpp_info["icu"].include_paths[0].replace('\\', '/'),
-                self.deps_cpp_info["icu"].lib_paths[0].replace('\\', '/'))
+        # if self.use_icu:
+        #     contents += "\nusing icu : 60.2 : <include>%s <search>%s ;" % (
+        #         self.deps_cpp_info["icu"].include_paths[0].replace('\\', '/'),
+        #         self.deps_cpp_info["icu"].lib_paths[0].replace('\\', '/'))
 
         toolset, version, exe = self.get_toolset_version_and_exe()
         exe = compiler_command or exe  # Prioritize CXX
@@ -535,6 +607,29 @@ class BitprimConanBoost(ConanFile):
         #             else "cd %s && cat bootstrap.log" % self.FOLDER_NAME)
         #     raise
 
+
+
+    # circumvent_boost_icu_detection()
+    # {
+    #     # Boost expects a directory structure for ICU which is incorrect.
+    #     # Boost ICU discovery fails when using prefix, can't fix with -sICU_LINK,
+    #     # so we rewrite the two 'has_icu_test.cpp' files to always return success.
+
+    #     local SUCCESS="int main() { return 0; }"
+    #     local REGEX_TEST="libs/regex/build/has_icu_test.cpp"
+    #     local LOCALE_TEST="libs/locale/build/has_icu_test.cpp"
+
+    #     echo $SUCCESS > $REGEX_TEST
+    #     echo $SUCCESS > $LOCALE_TEST
+
+    #     # echo "Hack: ICU detection modified, will always indicate found."
+    # }
+
+
+    def _get_icu_path(self):
+        return os.path.normpath(self.deps_cpp_info["icu"].lib_paths[0] + os.sep + os.pardir)
+        
+
     def _get_boostrap_toolset(self):
         if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
             comp_ver = self.settings.compiler.version
@@ -545,13 +640,25 @@ class BitprimConanBoost(ConanFile):
         return with_toolset
 
     def bootstrap(self):
-        folder = os.path.join(self.source_folder, self.folder_name, "tools", "build")
+        # folder = os.path.join(self.source_folder, self.folder_name, "tools", "build")
+        folder = os.path.join(self.source_folder, self.folder_name)
+
+        if self.use_icu:
+            self.output.info('icu_path: %s' % (self._get_icu_path(),))
+            with_icu_str = '--with-icu=%s' % (self._get_icu_path(),)
+
         try:
             bootstrap = "bootstrap.bat" if tools.os_info.is_windows else "./bootstrap.sh"
             with tools.vcvars(self.settings) if self.settings.compiler == "Visual Studio" else tools.no_op():
                 self.output.info("Using %s %s" % (self.settings.compiler, self.settings.compiler.version))
                 with tools.chdir(folder):
-                    cmd = "%s %s" % (bootstrap, self._get_boostrap_toolset())
+
+                    # ./bootstrap.sh \
+                    #     "--prefix=$PREFIX" \
+                    #     "--with-icu=$ICU_PREFIX"
+
+                    cmd = "%s %s %s" % (bootstrap, self._get_boostrap_toolset(), with_icu_str)
+
                     self.output.info(cmd)
                     self.run(cmd)
         except Exception as exc:
