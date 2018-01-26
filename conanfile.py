@@ -137,12 +137,12 @@ class BitprimConanBoost(ConanFile):
         if self.settings.compiler == "Visual Studio":
             self.options.remove("fPIC")
 
-            if self.options.shared and msvc_mt_build:
-                self.options.remove("shared")
+            # if self.options.shared and self.msvc_mt_build:
+            #     self.options.remove("shared")
 
-    # def configure(self):
-        # if self.settings.compiler == "Visual Studio" and self.options.shared and msvc_mt_build:
-        #     self.options.shared = False
+    def configure(self):
+        if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
+            self.options.shared = False
 
         # if not self.options.without_iostreams:
         #     if self.settings.os == "Linux" or self.settings.os == "Macos":
@@ -255,7 +255,7 @@ class BitprimConanBoost(ConanFile):
             flags.append("--layout=system")
 
         if self.settings.compiler == "Visual Studio" and self.settings.compiler.runtime:
-            flags.append("runtime-link=%s" % ("static" if msvc_mt_build else "shared"))
+            flags.append("runtime-link=%s" % ("static" if self.msvc_mt_build else "shared"))
 
         if self.settings.os == "Windows" and self.settings.compiler == "gcc":
             flags.append("threading=multi")
