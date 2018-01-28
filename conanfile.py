@@ -875,11 +875,11 @@ class BitprimConanBoost(ConanFile):
 
 
 
-    # def _msvc_version(self):
-    #     if self.settings.compiler.version == "15":
-    #         return "14.1"
-    #     else:
-    #         return "%s.0" % self.settings.compiler.version
+    def _msvc_version(self):
+        if self.settings.compiler.version == "15":
+            return "14.1"
+        else:
+            return "%s.0" % self.settings.compiler.version
 
     # def _mingw_version(self):
     #     return "%s" % self.settings.compiler.version
