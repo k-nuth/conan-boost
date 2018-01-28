@@ -243,7 +243,7 @@ class BitprimConanBoost(ConanFile):
         b2_exe = self.bootstrap()
         flags = self.get_build_flags()
         # Help locating bzip2 and zlib
-        # self.create_user_config_jam(self.build_folder)
+        self.create_user_config_jam(self.build_folder)
 
         # JOIN ALL FLAGS
         b2_flags = " ".join(flags)
@@ -436,19 +436,20 @@ class BitprimConanBoost(ConanFile):
                 #     else:
                 #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
 
-                if str(self.settings.compiler.libcxx) == "libstdc++":
-                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
-                elif str(self.settings.compiler.libcxx) == "libstdc++11":
-                    flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+                if self.settings.compiler == "gcc":
+                    if str(self.settings.compiler.libcxx) == "libstdc++":
+                        flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
+                    elif str(self.settings.compiler.libcxx) == "libstdc++11":
+                        flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
 
                 if "clang" in str(self.settings.compiler):
                     if str(self.settings.compiler.libcxx) == "libc++":
                         cxx_flags.append("-stdlib=libc++")
-                        cxx_flags.append("-std=c++11")
+                        # cxx_flags.append("-std=c++11")
                         flags.append('linkflags="-stdlib=libc++"')
                     else:
                         cxx_flags.append("-stdlib=libstdc++")
-                        cxx_flags.append("-std=c++11")
+                        # cxx_flags.append("-std=c++11")
             except:
                 pass
             # except BaseException as e:
@@ -511,19 +512,19 @@ class BitprimConanBoost(ConanFile):
         compiler_command = os.environ.get('CXX', None)
 
         contents = ""
-        if self.use_zip_bzip2:
-            contents = "\nusing zlib : 1.2.11 : <include>%s <search>%s ;" % (
-                self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),
-                self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'))
+        # if self.use_zip_bzip2:
+        #     contents = "\nusing zlib : 1.2.11 : <include>%s <search>%s ;" % (
+        #         self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),
+        #         self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'))
 
-            # if self.settings.os == "Linux" or self.settings.os == "Macos":
-            #     contents += "\nusing bzip2 : 1.0.6 : <include>%s <search>%s ;" % (
-            #         self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
-            #         self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
+        #     # if self.settings.os == "Linux" or self.settings.os == "Macos":
+        #     #     contents += "\nusing bzip2 : 1.0.6 : <include>%s <search>%s ;" % (
+        #     #         self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
+        #     #         self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
 
-            contents += "\nusing bzip2 : 1.0.6 : <include>%s <search>%s ;" % (
-                self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
-                self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
+        #     contents += "\nusing bzip2 : 1.0.6 : <include>%s <search>%s ;" % (
+        #         self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),
+        #         self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'))
 
         # if self.use_icu:
         #     contents += "\nusing icu : 60.2 : <include>%s <search>%s ;" % (
@@ -643,7 +644,7 @@ class BitprimConanBoost(ConanFile):
         # folder = os.path.join(self.source_folder, self.folder_name, "tools", "build")
         folder = os.path.join(self.source_folder, self.folder_name)
 
-        if self.use_icu:
+        if self.use_icu and self.settings.os != "Windows":
             self.output.info('icu_path: %s' % (self._get_icu_path(),))
             with_icu_str = '--with-icu=%s' % (self._get_icu_path(),)
 
@@ -656,6 +657,9 @@ class BitprimConanBoost(ConanFile):
                     # ./bootstrap.sh \
                     #     "--prefix=$PREFIX" \
                     #     "--with-icu=$ICU_PREFIX"
+
+                    self.output.info('self._get_boostrap_toolset(): %s' % (self._get_boostrap_toolset(),))
+
 
                     cmd = "%s %s %s" % (bootstrap, self._get_boostrap_toolset(), with_icu_str)
 
