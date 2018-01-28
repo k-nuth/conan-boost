@@ -392,7 +392,7 @@ class BitprimConanBoost(ConanFile):
         # CXX FLAGS
         cxx_flags = []
         # fPIC DEFINITION
-        if self.options.fPIC and self.settings.compiler != "Visual Studio":
+        if self.settings.compiler != "Visual Studio" and self.options.fPIC:
             cxx_flags.append("-fPIC")
 
         # try:
