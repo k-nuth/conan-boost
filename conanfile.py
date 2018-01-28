@@ -280,20 +280,22 @@ class BitprimConanBoost(ConanFile):
 
         # flags = []
 
-        # if self.settings.compiler == "Visual Studio":
-        #     flags.append("toolset=msvc-%s" % self._msvc_version())
-        # elif self.settings.compiler == "gcc":
-        #     # For GCC we only need the major version otherwhise Boost doesn't find the compiler
-        #     #flags.append("toolset=%s-%s"% (self.settings.compiler, self._gcc_short_version(self.settings.compiler.version)))
-        #     flags.append("toolset=gcc")
-        # elif str(self.settings.compiler) in ["clang"]:
-        #     flags.append("toolset=%s-%s"% (self.settings.compiler, self.settings.compiler.version))
 
 
         if tools.cross_building(self.settings):
             flags = self.get_build_cross_flags()
         else:
             flags = []
+
+            if self.settings.compiler == "Visual Studio":
+                flags.append("toolset=msvc-%s" % self._msvc_version())
+            elif self.settings.compiler == "gcc":
+                # For GCC we only need the major version otherwhise Boost doesn't find the compiler
+                #flags.append("toolset=%s-%s"% (self.settings.compiler, self._gcc_short_version(self.settings.compiler.version)))
+                flags.append("toolset=gcc")
+            elif str(self.settings.compiler) in ["clang"]:
+                flags.append("toolset=%s-%s"% (self.settings.compiler, self.settings.compiler.version))
+
             if self.settings.arch == 'x86' and 'address-model=32' not in flags:
                 flags.append('address-model=32')
             elif self.settings.arch == 'x86_64' and 'address-model=64' not in flags:
