@@ -243,7 +243,7 @@ class BitprimConanBoost(ConanFile):
         b2_exe = self.bootstrap()
         flags = self.get_build_flags()
         # Help locating bzip2 and zlib
-        self.create_user_config_jam(self.build_folder)
+        # self.create_user_config_jam(self.build_folder)
 
         # JOIN ALL FLAGS
         b2_flags = " ".join(flags)
@@ -426,7 +426,7 @@ class BitprimConanBoost(ConanFile):
         # Standalone toolchain fails when declare the std lib
         if self.settings.os != "Android":
             try:
-                if self.settings.compiler in [ "gcc", "clang" ]:
+                if self.settings.compiler in [ "gcc", "clang", "apple-clang" ]:
                     cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
 
                 if self.settings.compiler != "Visual Studio":
@@ -649,6 +649,8 @@ class BitprimConanBoost(ConanFile):
         if self.use_icu and self.settings.os != "Windows":
             self.output.info('icu_path: %s' % (self._get_icu_path(),))
             with_icu_str = '--with-icu=%s' % (self._get_icu_path(),)
+        else:
+            with_icu_str = ''
 
         try:
             bootstrap = "bootstrap.bat" if tools.os_info.is_windows else "./bootstrap.sh"
@@ -660,7 +662,7 @@ class BitprimConanBoost(ConanFile):
                     #     "--prefix=$PREFIX" \
                     #     "--with-icu=$ICU_PREFIX"
 
-                    self.output.info('self._get_boostrap_toolset(): %s' % (self._get_boostrap_toolset(),))
+                    # self.output.info('self._get_boostrap_toolset(): %s' % (self._get_boostrap_toolset(),))
 
 
                     cmd = "%s %s %s" % (bootstrap, self._get_boostrap_toolset(), with_icu_str)
