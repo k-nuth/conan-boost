@@ -238,11 +238,11 @@ class BitprimConanBoost(ConanFile):
         with open(locale_test, "w") as f:
             f.write(replace_str)
 
-        with open(regex_test, 'r') as fin:
-            print(fin.read())
+        # with open(regex_test, 'r') as fin:
+        #     print(fin.read())
 
-        with open(locale_test, 'r') as fin:
-            print(fin.read())
+        # with open(locale_test, 'r') as fin:
+        #     print(fin.read())
 
 
         b2_exe = self.bootstrap()
@@ -282,10 +282,7 @@ class BitprimConanBoost(ConanFile):
                     self.run(full_command)
 
     def get_build_flags(self):
-
         # flags = []
-
-
 
         if tools.cross_building(self.settings):
             flags = self.get_build_cross_flags()
