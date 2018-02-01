@@ -842,6 +842,10 @@ class BitprimConanBoost(ConanFile):
         if self.options.without_test:  # remove boost_unit_test_framework
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "unit_test" not in lib]
 
+        #Fernando: Removing prg_exec_monitor and test_exec_monitor from libraries 
+        self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "prg_exec_monitor" not in lib]
+        self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "test_exec_monitor" not in lib]
+
         self.output.info("LIBRARIES: %s" % self.cpp_info.libs)
         self.output.info("Package folder: %s" % self.package_folder)
 
