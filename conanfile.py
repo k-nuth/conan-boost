@@ -875,7 +875,8 @@ class BitprimConanBoost(ConanFile):
                 # DISABLES AUTO LINKING! NO SMART AND MAGIC DECISIONS THANKS!
                 self.cpp_info.defines.extend(["BOOST_ALL_NO_LIB"])
 
-
+        if self.settings.compiler == "Visual Studio":
+            self.cpp_info.defines.extend(["BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"])
 
 #     def prepare_deps_options_env(self):
 #         ret = {}
