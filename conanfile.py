@@ -181,9 +181,14 @@ class BitprimConanBoost(ConanFile):
     #         self.info.settings.clear()
 
     def package_id(self):
-        self.output.info('def package_id(self):')
+        # self.output.info('def package_id(self):')
         if self.options.header_only:
             self.info.header_only()
+
+        #For Bitprim Packages libstdc++ and libstdc++11 are the same
+        if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
+            if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                self.info.settings.compiler.libcxx = "ANY"
 
     def source(self):
         self.output.info('def source(self):')
@@ -233,11 +238,11 @@ class BitprimConanBoost(ConanFile):
         with open(locale_test, "w") as f:
             f.write(replace_str)
 
-        with open(regex_test, 'r') as fin:
-            print(fin.read())
+        # with open(regex_test, 'r') as fin:
+        #     print(fin.read())
 
-        with open(locale_test, 'r') as fin:
-            print(fin.read())
+        # with open(locale_test, 'r') as fin:
+        #     print(fin.read())
 
 
         b2_exe = self.bootstrap()
@@ -277,10 +282,7 @@ class BitprimConanBoost(ConanFile):
                     self.run(full_command)
 
     def get_build_flags(self):
-
         # flags = []
-
-
 
         if tools.cross_building(self.settings):
             flags = self.get_build_cross_flags()
@@ -438,10 +440,20 @@ class BitprimConanBoost(ConanFile):
                 #     else:
                 #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
 
+                # if self.settings.compiler == "gcc":
+                #     if str(self.settings.compiler.libcxx) == "libstdc++":
+                #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
+                #     elif str(self.settings.compiler.libcxx) == "libstdc++11":
+                #         flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+
+
                 if self.settings.compiler == "gcc":
-                    if str(self.settings.compiler.libcxx) == "libstdc++":
+                    if float(str(self.settings.compiler.version)) >= 5:
+                        flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
+                    else:
                         flags.append("define=_GLIBCXX_USE_CXX11_ABI=0")
-                    elif str(self.settings.compiler.libcxx) == "libstdc++11":
+                elif self.settings.compiler == "clang":
+                    if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
                         flags.append("define=_GLIBCXX_USE_CXX11_ABI=1")
 
                 if "clang" in str(self.settings.compiler):
