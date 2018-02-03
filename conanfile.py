@@ -139,6 +139,8 @@ class BitprimConanBoost(ConanFile):
         if self.use_icu:
             self.requires("icu/60.2@bitprim/stable")
             self.options["icu"].shared = self.options.shared #False
+            # self.requires("libiconv/1.15@bitprim/stable")
+            # self.options["libiconv"].shared = self.options.shared #False
 
     def config_options(self):
         self.output.info('def config_options(self):')
@@ -319,12 +321,9 @@ class BitprimConanBoost(ConanFile):
 
         flags.append("--reconfigure")
 
-        
-
-
-        # if not self.options.without_locale:
-        #     flags.append("boost.locale.iconv=off")
-        #     flags.append("boost.locale.posix=off")
+        if not self.options.without_locale:
+            flags.append("boost.locale.iconv=off")
+            flags.append("boost.locale.posix=off")
 
 
 
