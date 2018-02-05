@@ -127,20 +127,34 @@ class BitprimConanBoost(ConanFile):
     def msvc_mt_build(self):
         return "MT" in str(self.settings.compiler.runtime)
 
+    @property
+    def fPIC_enabled(self):
+        if self.settings.compiler == "Visual Studio":
+            return False
+        else:
+            return self.options.fPIC
+
+    @property
+    def is_shared(self):
+        if self.settings.compiler == "Visual Studio" and self.msvc_mt_build:
+            return False
+        else:
+            return self.options.shared
+
     def requirements(self):
         self.output.info('def requirements(self):')
         if self.use_zip_bzip2:
             self.requires("bzip2/1.0.6@bitprim/stable")
-            self.options["bzip2"].shared = self.options.shared #False
+            self.options["bzip2"].shared = self.is_shared #False
             
             self.requires("zlib/1.2.11@bitprim/stable")
-            self.options["zlib"].shared = self.options.shared #False
+            self.options["zlib"].shared = self.is_shared #False
 
         if self.use_icu:
             self.requires("icu/60.2@bitprim/stable")
-            self.options["icu"].shared = self.options.shared #False
+            self.options["icu"].shared = self.is_shared #False
             # self.requires("libiconv/1.15@bitprim/stable")
-            # self.options["libiconv"].shared = self.options.shared #False
+            # self.options["libiconv"].shared = self.is_shared #False
 
     def config_options(self):
         self.output.info('def config_options(self):')
@@ -186,11 +200,11 @@ class BitprimConanBoost(ConanFile):
         # self.output.info('def package_id(self):')
         if self.options.header_only:
             self.info.header_only()
-
-        #For Bitprim Packages libstdc++ and libstdc++11 are the same
-        if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
-            if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
-                self.info.settings.compiler.libcxx = "ANY"
+        else:
+            #For Bitprim Packages libstdc++ and libstdc++11 are the same
+            if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
+                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                    self.info.settings.compiler.libcxx = "ANY"
 
     def source(self):
         self.output.info('def source(self):')
@@ -316,7 +330,7 @@ class BitprimConanBoost(ConanFile):
         #     flags.append("threading=multi")
         flags.append("threading=multi")
 
-        flags.append("link=%s" % ("static" if not self.options.shared else "shared"))
+        flags.append("link=%s" % ("static" if not self.is_shared else "shared"))
         flags.append("variant=%s" % str(self.settings.build_type).lower())
 
         flags.append("--reconfigure")
@@ -393,7 +407,7 @@ class BitprimConanBoost(ConanFile):
         # CXX FLAGS
         cxx_flags = []
         # fPIC DEFINITION
-        if self.settings.compiler != "Visual Studio" and self.options.fPIC:
+        if self.fPIC_enabled:
             cxx_flags.append("-fPIC")
 
         # try:
@@ -707,7 +721,7 @@ class BitprimConanBoost(ConanFile):
         # copy to source with the good lib name
         out_lib_dir = os.path.join(self.folder_name, "stage", "lib")
         self.copy(pattern="*", dst="include/boost", src="%s/boost" % self.folder_name)
-        if not self.options.shared:
+        if not self.is_shared:
             self.copy(pattern="*.a", dst="lib", src=out_lib_dir, keep_path=False)
         self.copy(pattern="*.so", dst="lib", src=out_lib_dir, keep_path=False, symlinks=True)
         self.copy(pattern="*.so.*", dst="lib", src=out_lib_dir, keep_path=False, symlinks=True)
@@ -749,7 +763,7 @@ class BitprimConanBoost(ConanFile):
 
     # def package_info(self):
 
-    #     if not self.options.header_only and self.options.shared:
+    #     if not self.options.header_only and self.is_shared:
     #         self.cpp_info.defines.append("BOOST_ALL_DYN_LINK")
     #     else:
     #         self.cpp_info.defines.append("BOOST_USE_STATIC_LIBS")
@@ -798,7 +812,7 @@ class BitprimConanBoost(ConanFile):
 
                 
     #             suffix = "vc%s-%s%s-%s-%s" %  (visual_version.replace(".", ""), runtime, abi_tags, arch, version)
-    #             prefix = "lib" if not self.options.shared else ""
+    #             prefix = "lib" if not self.is_shared else ""
 
     #             win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
     #             win_libs.extend(["libboost_exception-%s" % suffix, "libboost_test_exec_monitor-%s" % suffix])
@@ -821,7 +835,7 @@ class BitprimConanBoost(ConanFile):
     #             abi_tags = ("-%s" % "".join(abi_tags)) if abi_tags else ""
 
     #             suffix = "mgw%s-%s%s-%s-%s" %  (mingw_version.replace(".", ""), runtime, abi_tags, arch, version)
-    #             #prefix = "lib" if not self.options.shared else ""
+    #             #prefix = "lib" if not self.is_shared else ""
     #             prefix = ""
 
     #             win_libs.extend(["%sboost_%s-%s" % (prefix, lib, suffix) for lib in libs if lib not in ["exception", "test_exec_monitor"]])
@@ -860,14 +874,14 @@ class BitprimConanBoost(ConanFile):
         self.output.info("LIBRARIES: %s" % self.cpp_info.libs)
         self.output.info("Package folder: %s" % self.package_folder)
 
-        if not self.options.header_only and self.options.shared:
+        if not self.options.header_only and self.is_shared:
             self.cpp_info.defines.append("BOOST_ALL_DYN_LINK")
         else:
             self.cpp_info.defines.append("BOOST_USE_STATIC_LIBS")
 
         if not self.options.header_only:
             if not self.options.without_python:
-                if not self.options.shared:
+                if not self.is_shared:
                     self.cpp_info.defines.append("BOOST_PYTHON_STATIC_LIB")
 
             if self.settings.compiler == "Visual Studio":
