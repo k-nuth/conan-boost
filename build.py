@@ -10,9 +10,7 @@ if __name__ == "__main__":
     filtered_builds = []
 
     # for settings, options, env_vars, build_requires in builder.builds:
-    for settings, options, env_vars, build_requires, reference in builder.items():
-        
-        
+    for settings, options, env_vars, build_requires, reference in builder.items:
         if (settings["build_type"] == "Release" or settings["build_type"] == "Debug") \
             and not options["boost:shared"] \
             and (not "compiler.libcxx" in settings or settings["compiler.libcxx"] != "libstdc++11"):
