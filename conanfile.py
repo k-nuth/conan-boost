@@ -363,6 +363,9 @@ class BitprimConanBoost(ConanFile):
         else:
             flags.append("-sNO_ZLIB=1")
         
+        #TODO(fernando): Add support for LZMA/xz 
+        flags.append("-sNO_LZMA=1")
+        
 
         # option_names = {
         #     "--without-atomic": self.options.without_atomic,
