@@ -45,8 +45,13 @@ class BitprimConanBoost(ConanFile):
     options = {
         "shared": [True, False],
         "header_only": [True, False],
-        "fPIC": [True, False]
+        "fPIC": [True, False],
+
+        "use_bzip2": [True, False],
+        "use_icu": [True, False],
+        "use_zlib": [True, False]
     }
+
     options.update({"without_%s" % libname: [True, False] for libname in lib_list})
 
     # default_options = ["shared=False", "header_only=False", "fPIC=True"]
@@ -55,6 +60,9 @@ class BitprimConanBoost(ConanFile):
     # default_options = tuple(default_options)
 
     default_options = tuple(["shared=False", "header_only=False", "fPIC=True",
+
+        "use_bzip2=False", "use_icu=True", "use_zlib=False", 
+
         "without_python=True", "without_atomic=False", "without_chrono=False", 
         "without_container=True", "without_context=True", "without_coroutine=True", 
         "without_date_time=False", "without_exception=False", "without_fiber=True", 
@@ -143,16 +151,22 @@ class BitprimConanBoost(ConanFile):
 
     def requirements(self):
         self.output.info('def requirements(self):')
-        if self.use_zip_bzip2:
+        
+        if self.options.use_bzip2 and self.use_zip_bzip2:
             self.requires("bzip2/1.0.6@bitprim/stable")
             self.options["bzip2"].shared = self.is_shared #False
+            #TODO(fernando): what about fPIC?
             
+        if self.options.use_zlib and self.use_zip_bzip2:
             self.requires("zlib/1.2.11@bitprim/stable")
             self.options["zlib"].shared = self.is_shared #False
+            #TODO(fernando): what about fPIC?
 
-        if self.use_icu:
+        if self.options.use_icu and self.use_icu:
             self.requires("icu/60.2@bitprim/stable")
             self.options["icu"].shared = self.is_shared #False
+            #TODO(fernando): what about fPIC?
+
             # self.requires("libiconv/1.15@bitprim/stable")
             # self.options["libiconv"].shared = self.is_shared #False
 
@@ -168,28 +182,6 @@ class BitprimConanBoost(ConanFile):
         self.output.info('def configure(self):')
         if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
             self.options.shared = False
-
-        # if not self.options.without_iostreams:
-        #     if self.settings.os == "Linux" or self.settings.os == "Macos":
-        #         self.requires("bzip2/1.0.6@bitprim/stable")
-        #         if not self.options.header_only:
-        #             self.options["bzip2/1.0.6"].shared = self.options.shared
-
-        #     self.requires("zlib/1.2.8@bitprim/stable")
-        #     if not self.options.header_only:
-        #         self.options["zlib"].shared = self.options.shared
-
-        # if self.use_zip_bzip2:
-        #     self.requires("bzip2/1.0.6@bitprim/stable")
-        #     self.options["bzip2"].shared = self.options.shared #False
-            
-        #     self.requires("zlib/1.2.11@bitprim/stable")
-        #     self.options["zlib"].shared = self.options.shared #False
-
-        # if self.use_icu:
-        #     self.requires("icu/60.2@bitprim/stable")
-        #     self.options["icu"].shared = self.options.shared #False
-
 
     # def package_id(self):
     #     if self.options.header_only:
@@ -226,39 +218,39 @@ class BitprimConanBoost(ConanFile):
             return
 
 
-        boost_build_folder = os.path.join(self.build_folder, self.folder_name)
+        if self.options.use_icu and self.use_icu:
+            boost_build_folder = os.path.join(self.build_folder, self.folder_name)
 
-        self.output.info(self.build_folder)
-        self.output.info(boost_build_folder)
+            self.output.info(self.build_folder)
+            self.output.info(boost_build_folder)
+
+            replace_str = "int main() { return 0; }"
+            # REGEX_TEST="libs/regex/build/has_icu_test.cpp"
+            # LOCALE_TEST="libs/locale/build/has_icu_test.cpp"
+            regex_test = os.path.join(boost_build_folder, 'libs', 'regex', 'build', 'has_icu_test.cpp')
+            locale_test = os.path.join(boost_build_folder, 'libs', 'locale', 'build', 'has_icu_test.cpp')
+
+            self.output.info(regex_test)
+            self.output.info(locale_test)
 
 
-        replace_str = "int main() { return 0; }"
-        # REGEX_TEST="libs/regex/build/has_icu_test.cpp"
-        # LOCALE_TEST="libs/locale/build/has_icu_test.cpp"
-        regex_test = os.path.join(boost_build_folder, 'libs', 'regex', 'build', 'has_icu_test.cpp')
-        locale_test = os.path.join(boost_build_folder, 'libs', 'locale', 'build', 'has_icu_test.cpp')
+            # with open(regex_test, 'r') as fin:
+            #     print(fin.read())
 
-        self.output.info(regex_test)
-        self.output.info(locale_test)
+            # with open(locale_test, 'r') as fin:
+            #     print(fin.read())
 
+            with open(regex_test, "w") as f:
+                f.write(replace_str)
 
-        # with open(regex_test, 'r') as fin:
-        #     print(fin.read())
+            with open(locale_test, "w") as f:
+                f.write(replace_str)
 
-        # with open(locale_test, 'r') as fin:
-        #     print(fin.read())
+            # with open(regex_test, 'r') as fin:
+            #     print(fin.read())
 
-        with open(regex_test, "w") as f:
-            f.write(replace_str)
-
-        with open(locale_test, "w") as f:
-            f.write(replace_str)
-
-        # with open(regex_test, 'r') as fin:
-        #     print(fin.read())
-
-        # with open(locale_test, 'r') as fin:
-        #     print(fin.read())
+            # with open(locale_test, 'r') as fin:
+            #     print(fin.read())
 
 
         b2_exe = self.bootstrap()
@@ -335,7 +327,7 @@ class BitprimConanBoost(ConanFile):
 
         flags.append("--reconfigure")
 
-        if not self.options.without_locale:
+        if self.options.use_icu and self.use_icu and not self.options.without_locale:
             flags.append("boost.locale.iconv=off")
             flags.append("boost.locale.posix=off")
 
@@ -353,17 +345,23 @@ class BitprimConanBoost(ConanFile):
     # #   print(self.deps_cpp_info["icu"].sharedlinkflags)
     # #   print(self.deps_cpp_info["icu"].exelinkflags)
 
-
-        if self.use_icu:
+        # if self.use_icu:
+        if self.options.use_icu and self.use_icu:
             flags.append("-sICU_PATH=%s" % (self._get_icu_path(),))
             # flags.append("-sICU_LINK=${ICU_LIBS[@]}")
 
-        if self.use_zip_bzip2:
-            flags.append("-sZLIB_LIBPATH=%s" % (self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'),))
-            flags.append("-sZLIB_INCLUDE=%s" % (self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),))
+
+        if self.options.use_bzip2 and self.use_zip_bzip2:
             flags.append("-sBZIP2_LIBPATH=%s" % (self.deps_cpp_info["bzip2"].lib_paths[0].replace('\\', '/'),))
             flags.append("-sBZIP2_INCLUDE=%s" % (self.deps_cpp_info["bzip2"].include_paths[0].replace('\\', '/'),))
+        else:
+            flags.append("-sNO_BZIP2=1")
 
+        if self.options.use_zlib and self.use_zip_bzip2:
+            flags.append("-sZLIB_LIBPATH=%s" % (self.deps_cpp_info["zlib"].lib_paths[0].replace('\\', '/'),))
+            flags.append("-sZLIB_INCLUDE=%s" % (self.deps_cpp_info["zlib"].include_paths[0].replace('\\', '/'),))
+        else:
+            flags.append("-sNO_ZLIB=1")
         
 
         # option_names = {
@@ -671,7 +669,7 @@ class BitprimConanBoost(ConanFile):
         # folder = os.path.join(self.source_folder, self.folder_name, "tools", "build")
         folder = os.path.join(self.source_folder, self.folder_name)
 
-        if self.use_icu and self.settings.os != "Windows":
+        if self.options.use_icu and self.use_icu and self.settings.os != "Windows":
             self.output.info('icu_path: %s' % (self._get_icu_path(),))
             with_icu_str = '--with-icu=%s' % (self._get_icu_path(),)
         else:
