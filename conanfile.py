@@ -872,6 +872,9 @@ class BitprimConanBoost(ConanFile):
         self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "prg_exec_monitor" not in lib]
         self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "test_exec_monitor" not in lib]
 
+        if self.settings.os == "Linux" or self.settings.os == "FreeBSD":
+            self.cpp_info.libs.append("rt")
+
         self.output.info("LIBRARIES: %s" % self.cpp_info.libs)
         self.output.info("Package folder: %s" % self.package_folder)
 
@@ -891,6 +894,8 @@ class BitprimConanBoost(ConanFile):
 
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.defines.extend(["BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"])
+
+
 
 #     def prepare_deps_options_env(self):
 #         ret = {}
