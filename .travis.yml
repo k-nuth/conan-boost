@@ -19,7 +19,7 @@
 
 env:
    global:
-     - CONAN_REFERENCE: "boost/1.66.0"
+     - CONAN_REFERENCE: "boost/1.67.0"
      - CONAN_USERNAME: "bitprim"
      - CONAN_LOGIN_USERNAME: "bitprim-bintray"
      - CONAN_CHANNEL: "stable"
@@ -83,6 +83,7 @@ matrix:
       - <<: *osx
         osx_image: xcode7.3
         env: CONAN_APPLE_CLANG_VERSIONS=7.3
+
       # - <<: *osx
       #   osx_image: xcode8.2
       #   env: CONAN_APPLE_CLANG_VERSIONS=8.0
