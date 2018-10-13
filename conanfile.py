@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#TODO(fernando): Remove Boost.Test, use doctest or catch2 instead.
 
 import os
 import sys
@@ -27,7 +28,7 @@ from conans import ConanFile, tools
 
 lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'locale', 'log',
             'program_options', 'random', 'regex', 'mpi', 'serialization', 'signals',
-            'coroutine', 'fiber', 'context', 'timer', 'thread', 'chrono', 'date_time',
+            'coroutine', 'fiber', 'context', 'contract', 'timer', 'thread', 'chrono', 'date_time',
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
             'stacktrace', 'test', 'type_erasure']
 
@@ -64,15 +65,17 @@ class BitprimConanBoost(ConanFile):
         "use_bzip2=False", "use_icu=True", "use_zlib=False", 
         "cppstd=14",
 
-        "without_python=True", "without_atomic=False", "without_chrono=False", 
-        "without_container=True", "without_context=True", "without_coroutine=True", 
-        "without_date_time=False", "without_exception=False", "without_fiber=True", 
+        "without_python=True", "without_atomic=True", "without_chrono=True", 
+        "without_container=True", "without_context=True", 
+        "without_contract=True", 
+        "without_coroutine=True", 
+        "without_date_time=False", "without_exception=True", "without_fiber=True", 
         "without_filesystem=False", "without_graph=True", "without_graph_parallel=True", 
         "without_iostreams=False", "without_locale=False", "without_log=False", 
         "without_math=True", "without_mpi=True", "without_program_options=False", 
-        "without_random=False", "without_regex=False", "without_serialization=True", 
+        "without_random=True", "without_regex=True", "without_serialization=True", 
         "without_signals=True", "without_stacktrace=True", "without_system=False", 
-        "without_test=False", "without_thread=False", "without_timer=False", 
+        "without_test=False", "without_thread=True", "without_timer=True", 
         "without_type_erasure=True", "without_wave=True"])
 
 
