@@ -46,10 +46,10 @@ class BitprimConanBoost(ConanFile):
         "shared": [True, False],
         "header_only": [True, False],
         "fPIC": [True, False],
-
         "use_bzip2": [True, False],
         "use_icu": [True, False],
-        "use_zlib": [True, False]
+        "use_zlib": [True, False],
+        "cppstd": ['98', '11', '14', '17', '20'],
     }
 
     options.update({"without_%s" % libname: [True, False] for libname in lib_list})
@@ -62,6 +62,7 @@ class BitprimConanBoost(ConanFile):
     default_options = tuple(["shared=False", "header_only=False", "fPIC=True",
 
         "use_bzip2=False", "use_icu=True", "use_zlib=False", 
+        "cppstd=14",
 
         "without_python=True", "without_atomic=False", "without_chrono=False", 
         "without_container=True", "without_context=True", "without_coroutine=True", 
@@ -150,7 +151,7 @@ class BitprimConanBoost(ConanFile):
             return self.options.shared
 
     def requirements(self):
-        self.output.info('def requirements(self):')
+        # self.output.info('def requirements(self):')
         
         if self.options.use_bzip2 and self.use_zip_bzip2:
             self.requires("bzip2/1.0.6@bitprim/stable")
@@ -171,7 +172,7 @@ class BitprimConanBoost(ConanFile):
             # self.options["libiconv"].shared = self.is_shared #False
 
     def config_options(self):
-        self.output.info('def config_options(self):')
+        # self.output.info('def config_options(self):')
         if self.settings.compiler == "Visual Studio":
             self.options.remove("fPIC")
 
@@ -179,7 +180,7 @@ class BitprimConanBoost(ConanFile):
                 self.options.remove("shared")
 
     def configure(self):
-        self.output.info('def configure(self):')
+        # self.output.info('def configure(self):')
         if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
             self.options.shared = False
 
@@ -199,7 +200,7 @@ class BitprimConanBoost(ConanFile):
                     self.info.settings.compiler.libcxx = "ANY"
 
     def source(self):
-        self.output.info('def source(self):')
+        # self.output.info('def source(self):')
         zip_name = "%s.zip" % self.folder_name if sys.platform == "win32" else "%s.tar.gz" % self.folder_name
         #url = "http://sourceforge.net/projects/boost/files/boost/%s/%s/download" % (self.version, zip_name)
         url = "https://dl.bintray.com/boostorg/release/%s/source/%s" % (self.version, zip_name)
@@ -212,7 +213,7 @@ class BitprimConanBoost(ConanFile):
     ##################### BUILDING METHODS ###########################
 
     def build(self):
-        self.output.info('def build(self):')
+        # self.output.info('def build(self):')
         if self.options.header_only:
             self.output.warn("Header only package, skipping build")
             return
@@ -321,10 +322,8 @@ class BitprimConanBoost(ConanFile):
         # if self.settings.os == "Windows" and self.settings.compiler == "gcc":
         #     flags.append("threading=multi")
         flags.append("threading=multi")
-
         flags.append("link=%s" % ("static" if not self.is_shared else "shared"))
         flags.append("variant=%s" % str(self.settings.build_type).lower())
-
         flags.append("--reconfigure")
 
         if self.options.use_icu and self.use_icu and not self.options.without_locale:
@@ -365,6 +364,19 @@ class BitprimConanBoost(ConanFile):
         
         #TODO(fernando): Add support for LZMA/xz 
         flags.append("-sNO_LZMA=1")
+
+        
+        
+        if self.options.cppstd == '98':
+            flags.append("cxxstd=98")
+        elif self.options.cppstd == '11':
+            flags.append("cxxstd=11")
+        elif self.options.cppstd == '14':
+            flags.append("cxxstd=14")
+        elif self.options.cppstd == '17':
+            flags.append("cxxstd=17")
+        elif self.options.cppstd == '20':
+            flags.append("cxxstd=20")
         
 
         # option_names = {
@@ -442,8 +454,8 @@ class BitprimConanBoost(ConanFile):
         # Standalone toolchain fails when declare the std lib
         if self.settings.os != "Android":
             try:
-                if self.settings.compiler in [ "gcc", "clang", "apple-clang" ]:
-                    cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
+                # if self.settings.compiler in [ "gcc", "clang", "apple-clang" ]:
+                #     cxx_flags.append("-std=c++11")  # always C++11 (at minimum)
 
                 if self.settings.compiler != "Visual Studio":
                     cxx_flags.append("-Wno-deprecated-declarations")
@@ -473,11 +485,9 @@ class BitprimConanBoost(ConanFile):
                 if "clang" in str(self.settings.compiler):
                     if str(self.settings.compiler.libcxx) == "libc++":
                         cxx_flags.append("-stdlib=libc++")
-                        # cxx_flags.append("-std=c++11")
                         flags.append('linkflags="-stdlib=libc++"')
                     else:
                         cxx_flags.append("-stdlib=libstdc++")
-                        # cxx_flags.append("-std=c++11")
             except:
                 pass
             # except BaseException as e:
