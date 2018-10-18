@@ -454,6 +454,14 @@ class BitprimConanBoost(ConanFile):
         if self.settings.compiler == "Visual Studio":
             cxx_flags.append("/DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE")
 
+            # Related with:
+            # https://github.com/boostorg/iostreams/issues/60
+            # https://github.com/boostorg/iostreams/pull/57/files
+            # Not fixed in Boost Iostreams 1.68.0
+            #   Maybe fixed in 1.69.0
+            cxx_flags.append("/D_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING")
+            
+
         # Standalone toolchain fails when declare the std lib
         if self.settings.os != "Android":
             try:
@@ -907,6 +915,14 @@ class BitprimConanBoost(ConanFile):
 
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.defines.extend(["BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"])
+
+            # Related with:
+            # https://github.com/boostorg/iostreams/issues/60
+            # https://github.com/boostorg/iostreams/pull/57/files
+            # Not fixed in Boost Iostreams 1.68.0
+            #   Maybe fixed in 1.69.0
+            self.cpp_info.defines.extend(["_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING"])
+
 
 
 
