@@ -22,6 +22,7 @@
 import os
 import sys
 from conans import ConanFile, tools
+from ci_utils import BitprimCxx11ABIFixer
 
 # From from *1 (see below, b2 --show-libraries), also ordered following linkage order
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
