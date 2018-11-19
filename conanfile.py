@@ -97,6 +97,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
 
     #exports_sources = "src/*"
     #exports = ["FindBoost.cmake", "OriginalFindBoost*"]
+    exports = "conan_*", "ci_utils/*"
     build_policy = "missing" # "always"
 
     libs_by_option = {
