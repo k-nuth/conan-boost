@@ -52,6 +52,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
         "use_icu": [True, False],
         "use_zlib": [True, False],
         "cppstd": ['98', '11', '14', '17', '20'],
+        "glibcxx_supports_cxx11_abi": "ANY",
     }
 
     options.update({"without_%s" % libname: [True, False] for libname in lib_list})
@@ -65,6 +66,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
 
         "use_bzip2=False", "use_icu=True", "use_zlib=False", 
         "cppstd=14",
+        "glibcxx_supports_cxx11_abi=_DUMMY_",
 
         "without_python=True", "without_atomic=True", "without_chrono=True", 
         "without_container=True", "without_context=True", 
