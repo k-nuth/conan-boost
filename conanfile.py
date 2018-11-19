@@ -32,7 +32,8 @@ lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'loc
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
             'stacktrace', 'test', 'type_erasure']
 
-class BitprimConanBoost(ConanFile):
+# class BitprimConanBoost(ConanFile):
+class BitprimConanBoost(BitprimCxx11ABIFixer):
     #name = "bitprim-conan-boost"
     name = "boost"
     version = "1.68.0"
@@ -183,6 +184,7 @@ class BitprimConanBoost(ConanFile):
                 self.options.remove("shared")
 
     def configure(self):
+        BitprimCxx11ABIFixer.configure(self)
         # self.output.info('def configure(self):')
         if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
             self.options.shared = False
@@ -193,14 +195,15 @@ class BitprimConanBoost(ConanFile):
     #         self.info.settings.clear()
 
     def package_id(self):
+        BitprimCxx11ABIFixer.package_id(self)
         # self.output.info('def package_id(self):')
         if self.options.header_only:
             self.info.header_only()
-        else:
-            #For Bitprim Packages libstdc++ and libstdc++11 are the same
-            if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
-                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
-                    self.info.settings.compiler.libcxx = "ANY"
+        # else:
+        #     #For Bitprim Packages libstdc++ and libstdc++11 are the same
+        #     if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
+        #         if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+        #             self.info.settings.compiler.libcxx = "ANY"
 
     def source(self):
         # self.output.info('def source(self):')
