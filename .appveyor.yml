@@ -31,31 +31,32 @@ environment:
     CONAN_UPLOAD: "https://api.bintray.com/conan/bitprim/bitprim"
 
     matrix:
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-          CONAN_VISUAL_VERSIONS: 15
-          CONAN_VISUAL_RUNTIMES: MT
-          VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-          CONAN_VISUAL_VERSIONS: 15
-          CONAN_VISUAL_RUNTIMES: MD
-          VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-          CONAN_VISUAL_VERSIONS: 15
-          CONAN_VISUAL_RUNTIMES: MTd
-          VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-          CONAN_VISUAL_VERSIONS: 15
-          CONAN_VISUAL_RUNTIMES: MDd
-          VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+      - MINGW_CONFIGURATIONS: "8@x86_64@seh@posix"
+      - MINGW_CONFIGURATIONS: "7@x86_64@seh@posix"
+      - MINGW_CONFIGURATIONS: "6@x86_64@seh@posix"
+      - MINGW_CONFIGURATIONS: "5@x86_64@seh@posix"
+      # - MINGW_CONFIGURATIONS: "4.9@x86_64@seh@posix"
 
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-          CONAN_VISUAL_VERSIONS: 14
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        CONAN_VISUAL_VERSIONS: 15
+        CONAN_VISUAL_RUNTIMES: MT
+        VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        CONAN_VISUAL_VERSIONS: 15
+        CONAN_VISUAL_RUNTIMES: MD
+        VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        CONAN_VISUAL_VERSIONS: 15
+        CONAN_VISUAL_RUNTIMES: MTd
+        VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        CONAN_VISUAL_VERSIONS: 15
+        CONAN_VISUAL_RUNTIMES: MDd
+        VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
 
-        - MINGW_CONFIGURATIONS: "8@x86_64@seh@posix"
-        - MINGW_CONFIGURATIONS: "7@x86_64@seh@posix"
-        - MINGW_CONFIGURATIONS: "6@x86_64@seh@posix"
-        - MINGW_CONFIGURATIONS: "5@x86_64@seh@posix"
-        # - MINGW_CONFIGURATIONS: "4.9@x86_64@seh@posix"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+        CONAN_VISUAL_VERSIONS: 14
+
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
@@ -64,4 +65,12 @@ install:
   - conan user # It creates the conan data directory
 
 test_script:
+  - conan install mingw_installer/1.0@conan/stable -s os="Windows" -s compiler="gcc" -s compiler.exception="seh" -s compiler.libcxx="libstdc++" -s compiler.threads="posix" -s compiler.version=7
+  - gcc --version
+  - dir 
+  - dir C:\MinGW
+  - set PATH=C:\MinGW\bin;%PATH%
+  - gcc --version
+  - git submodule init
+  - git submodule update
   - python build.py
