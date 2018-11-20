@@ -65,6 +65,8 @@ install:
   - conan user # It creates the conan data directory
 
 test_script:
+  - conan install mingw_installer/1.0@conan/stable -s os="Windows" -s compiler="gcc" -s compiler.exception="seh" -s compiler.libcxx="libstdc++" -s compiler.threads="posix" -s compiler.version=7
+  - gcc --version
   - dir 
   - dir C:\MinGW
   - set PATH=C:\MinGW\bin;%PATH%
