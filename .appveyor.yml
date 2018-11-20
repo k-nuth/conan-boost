@@ -67,6 +67,7 @@ install:
 test_script:
   - dir 
   - dir C:\MinGW
+  - set PATH=C:\MinGW\bin;%PATH%
   - gcc --version
   - git submodule init
   - git submodule update
