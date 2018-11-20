@@ -51,6 +51,7 @@ class BitprimConanBoost(ConanFile):
         "use_icu": [True, False],
         "use_zlib": [True, False],
         "cppstd": ['98', '11', '14', '17', '20'],
+        "verbose": [True, False],
     }
 
     options.update({"without_%s" % libname: [True, False] for libname in lib_list})
@@ -64,6 +65,7 @@ class BitprimConanBoost(ConanFile):
 
         "use_bzip2=False", "use_icu=True", "use_zlib=False", 
         "cppstd=14",
+        "verbose=False",
 
         "without_python=True", "without_atomic=True", "without_chrono=True", 
         "without_container=True", "without_context=True", 
@@ -508,7 +510,10 @@ class BitprimConanBoost(ConanFile):
         # cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
         # flags.append(cxx_flags)
         # flags.append("--without-python")
-        # flags.append("-d 2") #Verbosity (from 1 to 13)
+
+
+        if self.options.verbose:
+            flags.append("-d 2") #Verbosity (from 1 to 13)
 
         cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
         flags.append(cxx_flags)
