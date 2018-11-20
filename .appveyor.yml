@@ -69,9 +69,12 @@ test_script:
   # - gcc --version
   # - dir 
   # - dir C:\MinGW
-
   - set PATH=C:\MinGW\bin;%PATH%
-  - gcc --version
+
+  - IF "%MINGW_CONFIGURATIONS%"!="" (
+      gcc --version
+    )
+
   - git submodule init
   - git submodule update
   - python build.py
