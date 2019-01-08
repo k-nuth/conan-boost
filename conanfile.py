@@ -37,7 +37,7 @@ lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'loc
 class BitprimConanBoost(BitprimCxx11ABIFixer):
     #name = "bitprim-conan-boost"
     name = "boost"
-    version = "1.68.0"
+    version = "1.69.0"
 
     settings = "os", "arch", "compiler", "build_type"
     folder_name = "boost_%s" % version.replace(".", "_")
@@ -469,7 +469,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
             # https://github.com/boostorg/iostreams/pull/57/files
             # Not fixed in Boost Iostreams 1.68.0
             #   Maybe fixed in 1.69.0
-            cxx_flags.append("/D_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING")
+            # cxx_flags.append("/D_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING")
             
 
         # Standalone toolchain fails when declare the std lib
@@ -934,7 +934,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
             # https://github.com/boostorg/iostreams/pull/57/files
             # Not fixed in Boost Iostreams 1.68.0
             #   Maybe fixed in 1.69.0
-            self.cpp_info.defines.extend(["_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING"])
+            # self.cpp_info.defines.extend(["_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING"])
 
 
 
