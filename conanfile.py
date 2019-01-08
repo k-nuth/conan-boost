@@ -28,7 +28,7 @@ from ci_utils import BitprimCxx11ABIFixer
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
 
 lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'locale', 'log',
-            'program_options', 'random', 'regex', 'mpi', 'serialization', 'signals',
+            'program_options', 'random', 'regex', 'mpi', 'serialization', 
             'coroutine', 'fiber', 'context', 'contract', 'timer', 'thread', 'chrono', 'date_time',
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
             'stacktrace', 'test', 'type_erasure']
@@ -80,13 +80,13 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
         "without_iostreams=False", "without_locale=False", "without_log=False", 
         "without_math=True", "without_mpi=True", "without_program_options=False", 
         "without_random=True", "without_regex=True", "without_serialization=True", 
-        "without_signals=True", "without_stacktrace=True", "without_system=False", 
+        "without_stacktrace=True", "without_system=False", 
         "without_test=False", "without_thread=True", "without_timer=True", 
         "without_type_erasure=True", "without_wave=True"])
 
 
     # default_options = ['without_math=True', 'without_wave=True', 'without_container=True', 'without_exception=True', 'without_graph=True', 'without_iostreams=True', 'without_locale=True', 'without_log=True',
-    #                    'without_program_options=True', 'without_random=True', 'without_regex=True', 'without_mpi=True', 'without_serialization=True', 'without_signals=True',
+    #                    'without_program_options=True', 'without_random=True', 'without_regex=True', 'without_mpi=True', 'without_serialization=True', 
     #                    'without_coroutine=True', 'without_fiber=True', 'without_context=True', 'without_timer=True', 'without_thread=True', 'without_chrono=True', 'without_date_time=True',
     #                    'without_atomic=True', 'without_filesystem=True', 'without_system=True', 'without_graph_parallel=True', 'without_python=True',
     #                    'without_stacktrace=True', 'without_test=True', 'without_type_erasure=True']
@@ -124,7 +124,6 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
         "random": ["random"],
         "regex": ["regex"],
         "serialization": ["serialization", "wserialization"],
-        "signals": ["signals"],
         "stacktrace": ["stacktrace"],
         "system": ["system"],
         "test": ["unit_test_framework", "prg_exec_monitor", "test_exec_monitor"],
@@ -413,7 +412,6 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
         #     "--without-random": self.options.without_random,
         #     "--without-regex": self.options.without_regex,
         #     "--without-serialization": self.options.without_serialization,
-        #     "--without-signals": self.options.without_signals,
         #     "--without-stacktrace": self.options.without_stacktrace,
         #     "--without-system": self.options.without_system,
         #     "--without-test": self.options.without_test,
