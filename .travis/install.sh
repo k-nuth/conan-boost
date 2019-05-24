@@ -22,6 +22,6 @@ fi
 pip install conan --upgrade
 pip install conan_package_tools
 
-#conan remote add conan_bzip2 https://api.bintray.com/conan/bitprim/bitprim
+#conan remote add conan_bzip2 https://api.bintray.com/conan/k-nuth/kth
 
 conan user

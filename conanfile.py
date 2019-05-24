@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+# Copyright (c) 2016-2019 Knuth Project.
 #
-# This file is part of Bitprim.
+# This file is part of Knuth Project.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@
 import os
 import sys
 from conans import ConanFile, tools
-from ci_utils import BitprimCxx11ABIFixer
+from ci_utils import KnuthCxx11ABIFixer
 
 # From from *1 (see below, b2 --show-libraries), also ordered following linkage order
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
@@ -33,9 +33,9 @@ lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'loc
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
             'stacktrace', 'test', 'type_erasure']
 
-# class BitprimConanBoost(ConanFile):
-class BitprimConanBoost(BitprimCxx11ABIFixer):
-    #name = "bitprim-conan-boost"
+# class KnuthConanBoost(ConanFile):
+class KnuthConanBoost(KnuthCxx11ABIFixer):
+    #name = "kth-conan-boost"
     name = "boost"
     version = "1.69.0"
 
@@ -93,7 +93,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
 
 
 
-    url = "https://github.com/bitprim/bitprim-conan-boost"
+    url = "https://github.com/k-nuth/kth-conan-boost"
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
     short_paths = True
     no_copy_source = False
@@ -190,7 +190,7 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
                 self.options.remove("shared")
 
     def configure(self):
-        BitprimCxx11ABIFixer.configure(self)
+        KnuthCxx11ABIFixer.configure(self)
         # self.output.info('def configure(self):')
         if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
             self.options.shared = False
@@ -201,12 +201,12 @@ class BitprimConanBoost(BitprimCxx11ABIFixer):
     #         self.info.settings.clear()
 
     def package_id(self):
-        BitprimCxx11ABIFixer.package_id(self)
+        KnuthCxx11ABIFixer.package_id(self)
         # self.output.info('def package_id(self):')
         if self.options.header_only:
             self.info.header_only()
         # else:
-        #     #For Bitprim Packages libstdc++ and libstdc++11 are the same
+        #     #For Knuth Packages libstdc++ and libstdc++11 are the same
         #     if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
         #         if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
         #             self.info.settings.compiler.libcxx = "ANY"
