@@ -42,6 +42,9 @@ matrix:
 
       # Linux, GCC, libstdc++ ------------------------------------------------------
       - <<: *linux
+        env: CONAN_GCC_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/gcc9
+
+      - <<: *linux
         env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=conanio/gcc8
 
       - <<: *linux
