@@ -19,7 +19,7 @@
 
 env:
    global:
-     - CONAN_REFERENCE: "boost/1.69.0"
+     - CONAN_REFERENCE: "boost/1.70.0"
      - CONAN_USERNAME: "kth"
      - CONAN_LOGIN_USERNAME: "fpelliccioni"
      - CONAN_CHANNEL: "stable"
