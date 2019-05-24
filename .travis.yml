@@ -24,7 +24,7 @@ env:
      - CONAN_LOGIN_USERNAME: "fpelliccioni"
      - CONAN_CHANNEL: "stable"
      - CONAN_UPLOAD: "https://api.bintray.com/conan/k-nuth/kth"
-     - CONAN_REMOTES: "https://api.bintray.com/conan/k-nuth/kth, https://api.bintray.com/conan/bitprim/bitprim"
+    #  - CONAN_REMOTES: "https://api.bintray.com/conan/k-nuth/kth, https://api.bintray.com/conan/bitprim/bitprim"
 
 
 linux: &linux
