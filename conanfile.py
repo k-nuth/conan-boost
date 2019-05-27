@@ -174,7 +174,7 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
             #TODO(fernando): what about fPIC?
 
         if self.options.use_icu and self.use_icu:
-            self.requires("icu/60.2@bitprim/stable")
+            self.requires("icu/63.1@kth/stable")
             self.options["icu"].shared = self.is_shared #False
             #TODO(fernando): what about fPIC?
 
