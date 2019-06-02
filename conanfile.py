@@ -618,9 +618,9 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
         compiler_version = str(self.settings.compiler.version)
         compiler = str(self.settings.compiler)
         if self.settings.compiler == "Visual Studio":
-            cversion = self.settings.compiler.version
-            _msvc_version = "14.1" if cversion == "15" else "%s.0" % cversion
-            return "msvc", _msvc_version, ""
+            # cversion = self.settings.compiler.version
+            # _msvc_version = "14.1" if cversion == "15" else "%s.0" % cversion
+            return "msvc", self._msvc_version(), ""
         elif not self.settings.os == "Windows" and compiler == "gcc" and compiler_version[0] >= "5":
             # For GCC >= v5 we only need the major otherwise Boost doesn't find the compiler
             # The NOT windows check is necessary to exclude MinGW:
@@ -693,8 +693,9 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
 
     def _get_boostrap_toolset(self):
         if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
-            comp_ver = self.settings.compiler.version
-            return "vc%s" % ("141" if comp_ver == "15" else comp_ver)
+            # comp_ver = self.settings.compiler.version
+            # return "vc%s" % ("141" if comp_ver == "15" else comp_ver)
+            return self._msvc_version_boostrap()
 
         with_toolset = {"apple-clang": "darwin"}.get(str(self.settings.compiler),
                                                      str(self.settings.compiler))
@@ -952,10 +953,21 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
 
 
     def _msvc_version(self):
+        if self.settings.compiler.version == "16":
+            return "14.2"
         if self.settings.compiler.version == "15":
             return "14.1"
-        else:
-            return "%s.0" % self.settings.compiler.version
+
+        return "%s.0" % self.settings.compiler.version
+
+    def _msvc_version_boostrap(self):
+        if self.settings.compiler.version == "16":
+            return "vc142"
+        if self.settings.compiler.version == "15":
+            return "vc141"
+
+        return "vc%s" % self.settings.compiler.version
+
 
     # def _mingw_version(self):
     #     return "%s" % self.settings.compiler.version
