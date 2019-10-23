@@ -37,7 +37,7 @@ lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'loc
 class KnuthConanBoost(KnuthCxx11ABIFixer):
     #name = "kth-conan-boost"
     name = "boost"
-    version = "1.70.0"
+    version = "1.71.0"
 
     settings = "os", "arch", "compiler", "build_type"
     folder_name = "boost_%s" % version.replace(".", "_")
