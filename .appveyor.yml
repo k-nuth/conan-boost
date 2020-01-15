@@ -33,7 +33,11 @@ environment:
 
 
     matrix:
-      - MINGW_CONFIGURATIONS: "9@x86_64@seh@posix"
+      #TODO(fernando): enable MinGW 9 when toolchain be available 
+      #                https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/
+      # - MINGW_CONFIGURATIONS: "9@x86_64@seh@posix"
+
+
       - MINGW_CONFIGURATIONS: "8@x86_64@seh@posix"
       # - MINGW_CONFIGURATIONS: "7@x86_64@seh@posix"
       # - MINGW_CONFIGURATIONS: "6@x86_64@seh@posix"
