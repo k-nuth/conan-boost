@@ -67,7 +67,7 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
     default_options = tuple(["shared=False", "header_only=False", "fPIC=True",
 
         "use_bzip2=False", "use_icu=True", "use_zlib=False", 
-        "cppstd=14",
+        "cppstd=17",
         "verbose=False",
         "glibcxx_supports_cxx11_abi=_DUMMY_",
 
