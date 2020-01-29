@@ -19,8 +19,9 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     pyenv activate conan
 fi
 
-pip install conan --upgrade
+# pip install conan --upgrade
 pip install conan_package_tools
+pip install kthbuild
 
 #conan remote add conan_bzip2 https://api.bintray.com/conan/k-nuth/kth
 

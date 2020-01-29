@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016-2019 Knuth Project.
+# Copyright (c) 2016-2020 Knuth Project.
 #
 # This file is part of Knuth Project.
 #
@@ -79,8 +79,9 @@ environment:
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
-  - pip.exe install conan --upgrade
+  # - pip.exe install conan --upgrade
   - pip.exe install conan_package_tools
+  - pip.exe install kthbuild
   - conan user # It creates the conan data directory
 
 test_script:

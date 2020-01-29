@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016-2019 Knuth Project.
+# Copyright (c) 2016-2020 Knuth Project.
 #
 # This file is part of Knuth Project.
 #
@@ -22,7 +22,9 @@
 import os
 import sys
 from conans import ConanFile, tools
-from ci_utils import KnuthCxx11ABIFixer
+# from ci_utils import KnuthCxx11ABIFixer
+from kthbuild import KnuthConanFile
+
 
 # From from *1 (see below, b2 --show-libraries), also ordered following linkage order
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
@@ -33,8 +35,11 @@ lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'loc
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
             'stacktrace', 'test', 'type_erasure']
 
-# class KnuthConanBoost(ConanFile):
-class KnuthConanBoost(KnuthCxx11ABIFixer):
+# class KnuthConanBoost(KnuthCxx11ABIFixer):
+class KnuthConanBoost(KnuthConanFile):
+    def recipe_dir(self):
+        return os.path.dirname(os.path.abspath(__file__))
+
     name = "boost"
     version = "1.72.0"
 
@@ -172,18 +177,10 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
             # self.options["libiconv"].shared = self.is_shared #False
 
     def config_options(self):
-        # self.output.info('def config_options(self):')
-        if self.settings.compiler == "Visual Studio":
-            self.options.remove("fPIC")
-
-            if self.options.shared and self.msvc_mt_build:
-                self.options.remove("shared")
+        KnuthConanFile.config_options(self)
 
     def configure(self):
-        KnuthCxx11ABIFixer.configure(self)
-        # self.output.info('def configure(self):')
-        if self.settings.compiler == "Visual Studio" and self.options.shared and self.msvc_mt_build:
-            self.options.shared = False
+        KnuthConanFile.configure(self)
 
     # def package_id(self):
     #     if self.options.header_only:
@@ -191,7 +188,7 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
     #         self.info.settings.clear()
 
     def package_id(self):
-        KnuthCxx11ABIFixer.package_id(self)
+        KnuthConanFile.package_id(self)
         # self.output.info('def package_id(self):')
         if self.options.header_only:
             self.info.header_only()
