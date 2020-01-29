@@ -74,9 +74,8 @@ environment:
         CONAN_VISUAL_RUNTIMES: MDd
         VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
 
-      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-        CONAN_VISUAL_VERSIONS: 14
-
+      # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      #   CONAN_VISUAL_VERSIONS: 14
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
