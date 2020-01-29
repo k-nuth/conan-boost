@@ -35,7 +35,6 @@ lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'loc
 
 # class KnuthConanBoost(ConanFile):
 class KnuthConanBoost(KnuthCxx11ABIFixer):
-    #name = "kth-conan-boost"
     name = "boost"
     version = "1.72.0"
 
@@ -84,16 +83,7 @@ class KnuthConanBoost(KnuthCxx11ABIFixer):
         "without_test=False", "without_thread=True", "without_timer=True", 
         "without_type_erasure=True", "without_wave=True"])
 
-
-    # default_options = ['without_math=True', 'without_wave=True', 'without_container=True', 'without_exception=True', 'without_graph=True', 'without_iostreams=True', 'without_locale=True', 'without_log=True',
-    #                    'without_program_options=True', 'without_random=True', 'without_regex=True', 'without_mpi=True', 'without_serialization=True', 
-    #                    'without_coroutine=True', 'without_fiber=True', 'without_context=True', 'without_timer=True', 'without_thread=True', 'without_chrono=True', 'without_date_time=True',
-    #                    'without_atomic=True', 'without_filesystem=True', 'without_system=True', 'without_graph_parallel=True', 'without_python=True',
-    #                    'without_stacktrace=True', 'without_test=True', 'without_type_erasure=True']
-
-
-
-    url = "https://github.com/k-nuth/kth-conan-boost"
+    url = "https://github.com/k-nuth/conan-boost"
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
     short_paths = True
     no_copy_source = False
