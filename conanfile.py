@@ -22,7 +22,6 @@
 import os
 import sys
 from conans import ConanFile, tools
-# from ci_utils import KnuthCxx11ABIFixer
 from kthbuild import KnuthConanFile
 
 
@@ -58,6 +57,11 @@ class KnuthConanBoost(KnuthConanFile):
         "use_zlib": [True, False],
         "cppstd": ['98', '11', '14', '17', '20'],
         "verbose": [True, False],
+        "microarchitecture": "ANY",
+        "fix_march": [True, False],
+        "march_id": "ANY",
+        "cxxflags": "ANY",
+        "cflags": "ANY",
         "glibcxx_supports_cxx11_abi": "ANY",
     }
 
@@ -73,6 +77,11 @@ class KnuthConanBoost(KnuthConanFile):
         "use_bzip2=False", "use_icu=True", "use_zlib=False", 
         "cppstd=17",
         "verbose=False",
+        "microarchitecture": '_DUMMY_',
+        "fix_march": False,
+        "march_id": '_DUMMY_',
+        "cxxflags": '_DUMMY_',
+        "cflags": '_DUMMY_',
         "glibcxx_supports_cxx11_abi=_DUMMY_",
 
         "without_python=True", "without_atomic=True", "without_chrono=True", 

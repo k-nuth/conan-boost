@@ -33,16 +33,6 @@ environment:
 
 
     matrix:
-      #TODO(fernando): enable MinGW 9 when toolchain be available 
-      #                https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/
-      # - MINGW_CONFIGURATIONS: "9@x86_64@seh@posix"
-
-
-      - MINGW_CONFIGURATIONS: "8@x86_64@seh@posix"
-      # - MINGW_CONFIGURATIONS: "7@x86_64@seh@posix"
-      # - MINGW_CONFIGURATIONS: "6@x86_64@seh@posix"
-      # - MINGW_CONFIGURATIONS: "5@x86_64@seh@posix"
-      # # - MINGW_CONFIGURATIONS: "4.9@x86_64@seh@posix"
 
       - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
         CONAN_VISUAL_VERSIONS: 16
@@ -76,6 +66,19 @@ environment:
 
       # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       #   CONAN_VISUAL_VERSIONS: 14
+
+
+      #TODO(fernando): enable MinGW 9 when toolchain be available 
+      #                https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/
+      # - MINGW_CONFIGURATIONS: "9@x86_64@seh@posix"
+
+
+      - MINGW_CONFIGURATIONS: "8@x86_64@seh@posix"
+      # - MINGW_CONFIGURATIONS: "7@x86_64@seh@posix"
+      # - MINGW_CONFIGURATIONS: "6@x86_64@seh@posix"
+      # - MINGW_CONFIGURATIONS: "5@x86_64@seh@posix"
+      # # - MINGW_CONFIGURATIONS: "4.9@x86_64@seh@posix"
+
 
 install:
   - set PATH=%PYTHON%;%PYTHON%/Scripts/;%PATH%;
