@@ -26,6 +26,11 @@ env:
      - CONAN_UPLOAD: "https://api.bintray.com/conan/k-nuth/kth"
     #  - CONAN_REMOTES: "https://api.bintray.com/conan/k-nuth/kth, https://api.bintray.com/conan/bitprim/bitprim"
 
+cache:
+  timeout: 600
+  ccache: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
 
 linux: &linux
    os: linux
@@ -114,6 +119,10 @@ matrix:
       # - <<: *osx
       #   osx_image: xcode8.2
       #   env: CONAN_APPLE_CLANG_VERSIONS=8.0
+
+
+before_cache:
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew cleanup; fi
 
 install:
   # - chmod +x .travis/install.sh
