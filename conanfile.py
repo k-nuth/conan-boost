@@ -28,7 +28,7 @@ from kthbuild import KnuthConanFile
 # From from *1 (see below, b2 --show-libraries), also ordered following linkage order
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
 
-lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'iostreams', 'locale', 'log',
+lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'headers', 'iostreams', 'locale', 'log',
             'program_options', 'random', 'regex', 'mpi', 'serialization', 
             'coroutine', 'fiber', 'context', 'contract', 'timer', 'thread', 'chrono', 'date_time',
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
@@ -84,18 +84,36 @@ class KnuthConanBoost(KnuthConanFile):
         "cflags=_DUMMY_",
         "glibcxx_supports_cxx11_abi=_DUMMY_",
 
-        "without_python=True", "without_atomic=True", "without_chrono=True", 
-        "without_container=True", "without_context=True", 
+        "without_python=True", 
+        "without_atomic=True", 
+        "without_chrono=True", 
+        "without_container=True", 
+        "without_context=True", 
         "without_contract=True", 
         "without_coroutine=True", 
-        "without_date_time=False", "without_exception=True", "without_fiber=True", 
-        "without_filesystem=False", "without_graph=True", "without_graph_parallel=True", 
-        "without_iostreams=False", "without_locale=False", "without_log=False", 
-        "without_math=True", "without_mpi=True", "without_program_options=False", 
-        "without_random=True", "without_regex=True", "without_serialization=True", 
-        "without_stacktrace=True", "without_system=False", 
-        "without_test=False", "without_thread=True", "without_timer=True", 
-        "without_type_erasure=True", "without_wave=True"])
+        "without_date_time=False", 
+        "without_exception=True", 
+        "without_fiber=True", 
+        "without_filesystem=False", 
+        "without_graph=True", 
+        "without_graph_parallel=True", 
+        "without_headers=True", 
+        "without_iostreams=False", 
+        "without_locale=False", 
+        "without_log=False", 
+        "without_math=True", 
+        "without_mpi=True", 
+        "without_program_options=False", 
+        "without_random=True", 
+        "without_regex=True", 
+        "without_serialization=True", 
+        "without_stacktrace=True", 
+        "without_system=False", 
+        "without_test=False", 
+        "without_thread=True", 
+        "without_timer=True", 
+        "without_type_erasure=True", 
+        "without_wave=True"])
 
     url = "https://github.com/k-nuth/conan-boost"
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
@@ -119,6 +137,7 @@ class KnuthConanBoost(KnuthConanFile):
         "filesystem": ["filesystem"],
         "graph": ["graph"],
         "graph_parallel": ["graph_parallel"],
+        "headers": ["headers"],
         "iostreams": ["iostreams"],
         "locale": ["locale"],
         "log": ["log", "log_setup"],
