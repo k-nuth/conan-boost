@@ -924,6 +924,9 @@ class KnuthConanBoost(KnuthConanFile):
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.defines.extend(["BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"])
 
+        if not self.options.without_locale:
+            self.cpp_info.defines.append("BOOST_LOCALE_HIDE_AUTO_PTR")
+
             # Related with:
             # https://github.com/boostorg/iostreams/issues/60
             # https://github.com/boostorg/iostreams/pull/57/files
