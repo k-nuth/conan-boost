@@ -40,7 +40,7 @@ class KnuthConanBoost(KnuthConanFile):
         return os.path.dirname(os.path.abspath(__file__))
 
     name = "boost"
-    version = "1.72.0"
+    version = "1.73.0"
 
     settings = "os", "arch", "compiler", "build_type"
     folder_name = "boost_%s" % version.replace(".", "_")
