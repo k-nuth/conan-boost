@@ -1,6 +1,7 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
+import copy
 import os
 from conan.packager import ConanMultiPackager
 from kthbuild import get_name_from_recipe, get_base_march_ids, get_builder, handle_microarchs, copy_env_vars, filter_valid_exts, filter_marchs_tests
@@ -21,7 +22,12 @@ if __name__ == "__main__":
             and not options["boost:shared"] \
             and (not "compiler.libcxx" in settings or settings["compiler.libcxx"] != "libstdc++11"):
 
+            opts_no_log = copy.deepcopy(options)
+            opts_no_log["boost:without_filesystem"] = True
+            opts_no_log["boost:without_log"] = True
+
             handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, options, env_vars, build_requires)
+            handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_no_log, env_vars, build_requires)
             # filtered_builds.append([settings, options, env_vars, build_requires])
 
     builder.builds = filtered_builds

@@ -29,7 +29,7 @@ from kthbuild import KnuthConanFile
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
 
 lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'headers', 'iostreams', 'locale', 'log',
-            'program_options', 'random', 'regex', 'mpi', 'serialization', 
+            'program_options', 'random', 'regex', 'mpi', 'nowide', 'serialization', 
             'coroutine', 'fiber', 'context', 'contract', 'timer', 'thread', 'chrono', 'date_time',
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
             'stacktrace', 'test', 'type_erasure']
@@ -101,6 +101,7 @@ class KnuthConanBoost(KnuthConanFile):
         "without_iostreams=False", 
         "without_locale=False", 
         "without_log=False", 
+        "without_nowide=True", 
         "without_math=True", 
         "without_mpi=True", 
         "without_program_options=False", 
