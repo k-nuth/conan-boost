@@ -1,21 +1,6 @@
 #
 # Copyright (c) 2016-2020 Knuth Project.
 #
-# This file is part of Knuth Project.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
 
 #TODO(fernando): Remove Boost.Test, use doctest or catch2 instead.
 
@@ -23,7 +8,6 @@ import os
 import sys
 from conans import ConanFile, tools
 from kthbuild import KnuthConanFile
-
 
 # From from *1 (see below, b2 --show-libraries), also ordered following linkage order
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
@@ -67,54 +51,54 @@ class KnuthConanBoost(KnuthConanFile):
 
     options.update({"without_%s" % libname: [True, False] for libname in lib_list})
 
-    # default_options = ["shared=False", "header_only=False", "fPIC=True"]
-    # default_options.extend(["without_%s=False" % libname for libname in lib_list if libname != "python"])
-    # default_options.append("without_python=True")
-    # default_options = tuple(default_options)
+    default_options = {
+        "shared": False, 
+        "header_only": False, 
+        "fPIC": True,
+        "use_bzip2": False, 
+        "use_icu": True, 
+        "use_zlib": False, 
+        "cppstd": 17,
+        "verbose": False,
+        "microarchitecture": "_DUMMY_",
+        "fix_march": False,
+        "march_id": "_DUMMY_",
+        "cxxflags": "_DUMMY_",
+        "cflags": "_DUMMY_",
+        "glibcxx_supports_cxx11_abi": "_DUMMY_",
 
-    default_options = tuple(["shared=False", "header_only=False", "fPIC=True",
-
-        "use_bzip2=False", "use_icu=True", "use_zlib=False", 
-        "cppstd=17",
-        "verbose=False",
-        "microarchitecture=_DUMMY_",
-        "fix_march=False",
-        "march_id=_DUMMY_",
-        "cxxflags=_DUMMY_",
-        "cflags=_DUMMY_",
-        "glibcxx_supports_cxx11_abi=_DUMMY_",
-
-        "without_python=True", 
-        "without_atomic=True", 
-        "without_chrono=True", 
-        "without_container=True", 
-        "without_context=True", 
-        "without_contract=True", 
-        "without_coroutine=True", 
-        "without_date_time=False", 
-        "without_exception=True", 
-        "without_fiber=True", 
-        "without_filesystem=False", 
-        "without_graph=True", 
-        "without_graph_parallel=True", 
-        "without_headers=True", 
-        "without_iostreams=False", 
-        "without_locale=False", 
-        "without_log=False", 
-        "without_nowide=True", 
-        "without_math=True", 
-        "without_mpi=True", 
-        "without_program_options=False", 
-        "without_random=True", 
-        "without_regex=True", 
-        "without_serialization=True", 
-        "without_stacktrace=True", 
-        "without_system=False", 
-        "without_test=False", 
-        "without_thread=True", 
-        "without_timer=True", 
-        "without_type_erasure=True", 
-        "without_wave=True"])
+        "without_python": True, 
+        "without_atomic": True, 
+        "without_chrono": True, 
+        "without_container": True, 
+        "without_context": True, 
+        "without_contract": True, 
+        "without_coroutine": True, 
+        "without_date_time": False, 
+        "without_exception": True, 
+        "without_fiber": True, 
+        "without_filesystem": False, 
+        "without_graph": True, 
+        "without_graph_parallel": True, 
+        "without_headers": True, 
+        "without_iostreams": False, 
+        "without_locale": False, 
+        "without_log": False, 
+        "without_nowide": True, 
+        "without_math": True, 
+        "without_mpi": True, 
+        "without_program_options": False, 
+        "without_random": True, 
+        "without_regex": True, 
+        "without_serialization": True, 
+        "without_stacktrace": True, 
+        "without_system": False, 
+        "without_test": False, 
+        "without_thread": True, 
+        "without_timer": True, 
+        "without_type_erasure": True, 
+        "without_wave": True,
+    }
 
     url = "https://github.com/k-nuth/conan-boost"
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
