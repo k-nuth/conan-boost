@@ -20,8 +20,8 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
 fi
 
 # pip install conan --upgrade
-pip install conan_package_tools
-pip install kthbuild
+pip install conan_package_tools --upgrade
+pip install kthbuild --upgrade
 
 #conan remote add conan_bzip2 https://api.bintray.com/conan/k-nuth/kth
 
