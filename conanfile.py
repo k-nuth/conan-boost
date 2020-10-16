@@ -93,7 +93,7 @@ class KnuthConanBoost(KnuthConanFile):
         "without_serialization": True, 
         "without_stacktrace": True, 
         "without_system": False, 
-        "without_test": False, 
+        "without_test": True, 
         "without_thread": True, 
         "without_timer": True, 
         "without_type_erasure": True, 
