@@ -196,6 +196,10 @@ class KnuthConanBoost(KnuthConanFile):
     def configure(self):
         KnuthConanFile.configure(self)
 
+        if self.settings.compiler == "Visual Studio":
+            self.options.without_thread = False
+
+
     # def package_id(self):
     #     if self.options.header_only:
     #         self.info.requires.clear()
