@@ -82,7 +82,7 @@ class KnuthConanBoost(KnuthConanFile):
         "without_graph_parallel": True, 
         "without_headers": True, 
         "without_iostreams": False, 
-        "without_json": False, 
+        "without_json": True, 
         "without_locale": False, 
         "without_log": False, 
         "without_nowide": True, 
