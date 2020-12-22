@@ -22,12 +22,12 @@ if __name__ == "__main__":
             and not options["boost:shared"] \
             and (not "compiler.libcxx" in settings or settings["compiler.libcxx"] != "libstdc++11"):
 
-            opts_no_log = copy.deepcopy(options)
-            opts_no_log["boost:without_filesystem"] = True
-            opts_no_log["boost:without_log"] = True
+            # opts_no_log = copy.deepcopy(options)
+            # opts_no_log["boost:without_filesystem"] = True
+            # opts_no_log["boost:without_log"] = True
 
             handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, options, env_vars, build_requires)
-            handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_no_log, env_vars, build_requires)
+            # handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_no_log, env_vars, build_requires)
             # filtered_builds.append([settings, options, env_vars, build_requires])
 
     builder.builds = filtered_builds
