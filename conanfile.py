@@ -12,7 +12,7 @@ from kthbuild import KnuthConanFile
 # From from *1 (see below, b2 --show-libraries), also ordered following linkage order
 # see https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake to know the order
 
-lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'headers', 'iostreams', 'locale', 'log',
+lib_list = ['math', 'wave', 'container', 'exception', 'graph', 'headers', 'iostreams', 'json', 'locale', 'log',
             'program_options', 'random', 'regex', 'mpi', 'nowide', 'serialization', 
             'coroutine', 'fiber', 'context', 'contract', 'timer', 'thread', 'chrono', 'date_time',
             'atomic', 'filesystem', 'system', 'graph_parallel', 'python',
@@ -82,6 +82,7 @@ class KnuthConanBoost(KnuthConanFile):
         "without_graph_parallel": True, 
         "without_headers": True, 
         "without_iostreams": False, 
+        "without_json": False, 
         "without_locale": False, 
         "without_log": False, 
         "without_nowide": True, 
@@ -124,7 +125,9 @@ class KnuthConanBoost(KnuthConanFile):
         "graph_parallel": ["graph_parallel"],
         "headers": ["headers"],
         "iostreams": ["iostreams"],
+        "json": ["json"],
         "locale": ["locale"],
+        "nowide": ["nowide"],
         "log": ["log", "log_setup"],
         "math": ["math_c99", "math_c99f", "math_c99l", "math_tr1", "math_tr1f", "math_tr1l"],
         "mpi": ["mpi"],
