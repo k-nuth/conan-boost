@@ -185,8 +185,9 @@ class KnuthConanBoost(KnuthConanFile):
             #TODO(fernando): what about fPIC?
 
         if self.options.use_icu and self.use_icu:
-            self.requires("icu/64.2@kth/stable")
+            # self.requires("icu/64.2@kth/stable")
             # self.requires("icu/67.1@kth/stable")
+            self.requires("icu/68.2@kth/stable")
             self.options["icu"].shared = self.is_shared #False
             #TODO(fernando): what about fPIC?
 
