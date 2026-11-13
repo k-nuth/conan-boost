@@ -1,0 +1,73 @@
+name: Verify packages
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        platform:
+          - {os: ubuntu-24.04, compiler: gcc, version: '16'}
+          - {os: macos-26, compiler: apple-clang, version: '21'}
+          - {os: windows-2025, compiler: msvc, version: '194'}
+        mode: [headers, native-minimal]
+    name: package (${{ matrix.platform.os }}, ${{ matrix.mode }})
+    runs-on: ${{ matrix.platform.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+      - name: Select compiler
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            ci/install_gcc.sh 16
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+            sudo xcode-select --switch /Applications/Xcode_26.6.app/Contents/Developer
+            echo "CC=clang" >> "$GITHUB_ENV"
+            echo "CXX=clang++" >> "$GITHUB_ENV"
+          fi
+      - name: Select MSVC 14.44
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $installation = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'Visual Studio installation not found' }
+          $toolsetRoot = Join-Path $installation 'VC\Tools\MSVC'
+          $toolset = Get-ChildItem $toolsetRoot -Directory |
+            Where-Object Name -Like '14.44.*' |
+            Sort-Object Name -Descending |
+            Select-Object -First 1 -ExpandProperty Name
+          if (-not $toolset) { throw "MSVC 14.44 is not installed under $toolsetRoot" }
+          $compiler = Join-Path $installation "VC\Tools\MSVC\$toolset\bin\Hostx64\x64\cl.exe"
+          if (-not (Test-Path $compiler)) { throw "MSVC x64 compiler not found at $compiler" }
+          $devShell = Join-Path $installation 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll'
+          Import-Module $devShell
+          Enter-VsDevShell -VsInstallPath $installation -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64 -vcvars_ver=14.44'
+          @('PATH', 'INCLUDE', 'LIB', 'LIBPATH', 'VCToolsInstallDir', 'VCINSTALLDIR', 'VSINSTALLDIR', 'WindowsSdkDir', 'WindowsSDKVersion', 'UCRTVersion', 'UniversalCRTSdkDir') | ForEach-Object {
+            $value = [Environment]::GetEnvironmentVariable($_)
+            if ($value) { "$_=$value" >> $env:GITHUB_ENV }
+          }
+          "CXX=$compiler" >> $env:GITHUB_ENV
+          "VSWHERE=$vswhere" >> $env:GITHUB_ENV
+      - run: python -m pip install conan==2.34.0 cmake==4.4.4 pyyaml
+      - run: conan profile detect
+      - name: Configure VS 2026 with Ninja
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $profile = Join-Path $env:USERPROFILE '.conan2\profiles\default'
+          Add-Content $profile "`n[conf]`ntools.cmake.cmaketoolchain:generator=Ninja`ntools.microsoft.msbuild:vs_version=18"
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/check.py --mode ${{ matrix.mode }} --compiler ${{ matrix.platform.compiler }} --compiler-version ${{ matrix.platform.version }}

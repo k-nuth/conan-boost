@@ -603,11 +603,11 @@ class BoostConan(ConanFile):
             if Version(self.version) == "1.86.0" and is_msvc(self):
                 setattr(self.options, "without_process", True)
 
-        if Version(self.version) in ["1.90.0", "1.91.0"]:
-            # FIXME: boost.coroutine doesn't support Windows ARM64 due to missing context assembly
-            # See https://github.com/boostorg/context/issues/296
-            if self._is_windows_platform and "arm" in str(self.settings.arch):
-                self.options.without_coroutine = True
+        # Boost 1.92 Context defaults to winfib on Windows ARM64, whereas
+        # Coroutine requires make_fcontext/jump_fcontext. Keep it disabled.
+        # See boostorg/context build/Jamfile.v2 and coroutine_context.cpp.
+        if self._is_windows_platform and "arm" in str(self.settings.arch):
+            self.options.without_coroutine = True
 
     @property
     def _configure_options(self):
