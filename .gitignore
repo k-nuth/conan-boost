@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+consumer/build/
+consumer/CMakeUserPresets.json
+build/
+reports/
+CMakeUserPresets.json

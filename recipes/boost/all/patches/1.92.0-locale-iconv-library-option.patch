@@ -1,10 +1,8 @@
-diff --git a/libs/locale/build.jam b/libs/locale/build.jam
-index f1321db3..36899cdc 100644
 --- a/libs/locale/build.jam
 +++ b/libs/locale/build.jam
-@@ -11,6 +11,7 @@ project /boost/locale
+@@ -11,6 +11,7 @@
  # Features
-
+ 
  feature.feature boost.locale.iconv : on off : optional propagated ;
 +feature.feature boost.locale.iconv.lib : libc libiconv : optional propagated ;
  feature.feature boost.locale.icu : on off :  optional propagated ;
