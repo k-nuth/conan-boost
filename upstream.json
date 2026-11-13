@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/conan-io/conan-center-index",
+  "commit": "3bf77e929c34d2d02b5edc58932d8b46c81fe6d2",
+  "path": "recipes/boost",
+  "license": "MIT"
+}
